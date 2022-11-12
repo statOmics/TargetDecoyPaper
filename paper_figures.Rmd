@@ -442,6 +442,12 @@ ggsave(
   height = 3.9)
 ```
 
+# Session Info
+
+```{r}
+sessionInfo()
+```
+
 
 
 
