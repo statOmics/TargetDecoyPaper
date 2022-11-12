@@ -442,6 +442,15 @@ ggsave(
   height = 3.9)
 ```
 
+# Clean up files
+
+```{r}
+f <- list.files("./data", recursive = TRUE, full.names = TRUE)
+file.remove(f)
+file.remove(data)
+file.remove(destFile)
+```
+
 # Session Info
 
 ```{r}
