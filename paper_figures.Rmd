@@ -1,0 +1,447 @@
+---
+title: "Quality control for the target decoy approach for peptide identification"
+author: 
+  - name: Lieven Clement
+    affiliation:
+    - Ghent University
+output: 
+    html_document:
+      code_folding: hide
+      code_download: true
+      theme: flatly
+      toc: true
+      toc_float: true
+      highlight: tango
+      number_sections: true
+linkcolor: blue
+urlcolor: blue
+citecolor: blue
+---
+
+
+# load libraries
+
+```{r}
+suppressPackageStartupMessages({
+library(tidyverse)
+library(TargetDecoy)
+library(RCurl)
+})
+```
+
+# Download data from Zenodo
+ 
+```{r}
+# Download data from zenodo
+options(timeout=300)
+url <- "https://zenodo.org/record/7308022/files/search-results.zip?download=1"
+destFile <- "searchResults.zip"
+if (!file.exists(destFile)) download.file(url, destFile)
+unzip(destFile, exdir = "./data", overwrite = TRUE)
+```
+
+# Pyrococcus 
+
+## Import Pyrococcus Data in R
+
+```{r}
+allTsvFiles <- list.files(path="data",pattern=".tsv$",full.names = TRUE)
+msgfFiles <- allTsvFiles[grepl("msgf",allTsvFiles)&grepl("PXD001077",allTsvFiles)]
+dfsmsgf <- lapply(msgfFiles, read_tsv)
+crapEntries <- scan("db-gpm-crap-entries.txt", what = "character")
+dfsmsgf <- lapply(dfsmsgf, function(db) 
+  db[rowSums(sapply(crapEntries, grepl,fixed=TRUE,x = db$protein_list)) == 0,])
+
+tandemFiles <- allTsvFiles[grepl("xtandem",allTsvFiles)&grepl("PXD001077",allTsvFiles)]
+dfsTandem <- lapply(tandemFiles, read_tsv)
+dfsTandem <- lapply(dfsTandem, function(db) 
+  db[rowSums(sapply(crapEntries, grepl,fixed=TRUE,x = db$protein_list)) == 0,])
+```
+
+## FDR function 
+
+Calculate FDR on tibble with search results. It is assumed that higher scores are better. 
+
+```{r}
+# FDR function
+fdrDb <- function(db)
+{
+  db <- db %>% 
+    arrange(desc(score)) %>% 
+    mutate(FP = cumsum(is_decoy),
+           FDR = cumsum(is_decoy)/cumsum(!is_decoy))
+  FDR <- db$FDR
+  FDRmin <- FDR[length(FDR)]
+  for (j in (length(FDR)-1):1)
+  {
+    if (FDR[j] < FDRmin)
+      FDRmin <- FDR[j] else
+      FDR[j] <- FDRmin   
+  }
+  db$FDR <- FDR
+  db <- db %>% 
+    arrange(spectrum_id) 
+  return(db)
+}
+```
+
+## Generate plots for MSGF+  
+
+Histograms and P-P plots for rank1, rank 2 and search against human DB.
+
+```{r}
+# Generate MSGF+ plots pyrococcus
+histsMsgf <- lapply(dfsmsgf,function(db, score, decoy, log10) evalTargetDecoysHist(db %>% filter(rank==1), decoy, score, log10) + xlab("Score") + ggtitle(NULL) +   geom_histogram(bins=50, position="identity",alpha=.9), score="score", decoy="is_decoy", log10=TRUE)
+histsMsgfR2 <- lapply(dfsmsgf,function(db, score, decoy, log10) evalTargetDecoysHist(db %>% filter(rank==2), decoy, score, log10) + xlab("Score") + ggtitle(NULL) +  geom_histogram(bins=50, position="identity",alpha=.9)   
+, score="score", decoy="is_decoy", log10=TRUE)
+ppPlotsMsgf <- lapply(dfsmsgf,function(db, score, decoy, log10) evalTargetDecoysPPPlot(db %>% filter(rank==1), decoy, score, log10) + ggtitle(NULL) +xlab("Fd")+ylab("Ft"), score="score", decoy="is_decoy", log10=TRUE)
+
+pyroId <- which(
+  grepl(pattern="swissprot",msgfFiles,fixed = TRUE) & grepl(pattern="pfuriosus",msgfFiles,fixed = TRUE)
+  ) 
+
+dfHlp <- dfsmsgf[[pyroId]]  %>% 
+  filter(rank==1) %>% 
+  mutate(score = -log10(score)) %>%
+  fdrDb()
+thresh <- dfHlp %>%  
+  filter(FDR < 0.01) %>% 
+  pull(score) %>% 
+  min
+nSig <- dfHlp %>% filter(FDR < 0.01) %>% pull(is_decoy) %>% `!` %>% sum
+
+humanId <- which(
+  grepl(pattern="swissprot",msgfFiles,fixed = TRUE) & grepl(pattern="hsapiens",msgfFiles,fixed = TRUE)
+  ) 
+ggsave( 
+  "./figs/figMsgfSwissHistsPyroR1R2_Human.png", 
+  plot =  
+    gridExtra::grid.arrange(
+      histsMsgf[[pyroId]] +
+        geom_histogram(
+          bins=50, 
+          position="identity",
+          alpha=.9) +
+         ggtitle(paste(nSig,"target PSMs at 1% FDR")) +
+        annotate("rect", xmin = thresh, xmax = 35, ymin = -10, ymax = 1600, alpha = .2) + 
+      annotate(geom="text", x=thresh+1, y=1500, label="x > t['1% FDR']",
+              color="black",hjust=0 ,parse=TRUE) +
+        annotate(geom="rect",xmin=thresh,xmax=thresh,ymin=0,ymax=1600,color="red")+
+         theme(legend.position = c(0.75,0.75)),
+    histsMsgfR2[[pyroId]] + 
+         geom_histogram(
+           bins=50, 
+           position="identity",
+           alpha=.9) +
+         ggtitle("Rank 2 PSMs") +
+         theme(legend.position = c(0.75,0.75)),
+    histsMsgf[[humanId]] + 
+         geom_histogram(
+           bins=50, 
+           position="identity",
+           alpha=.9) +
+         ggtitle("Spectra matched to H. sapiens") +
+         theme(legend.position = c(0.75,0.75)),
+    ncol=3),
+  device = "png", 
+  width = 11.7,
+  height = 3.9)
+
+ggsave( 
+  "./figs/figMsgfSwissPPplotsPyro_Human.png", 
+  plot =  
+    gridExtra::grid.arrange(
+      ppPlotsMsgf[[humanId]] + 
+         ggtitle(NULL),
+       ppPlotsMsgf[[pyroId]] + 
+         ggtitle(NULL),
+       ncol=2),
+  device = "png", 
+  width = 7.8, 
+  height = 3.9)
+
+```
+
+## X-tandem searches
+
+
+### Preprocess tandem data
+
+Convert spectrum id into double for sorting + add FDR
+
+```{r}
+# Preprocess Tandem pyrococcus results
+for (i in 1:length(dfsTandem))
+{
+  
+  dfsTandem[[i]] <- dfsTandem[[i]] %>%
+    mutate(spectrum_id_orig = spectrum_id,
+           spectrum_id = sapply(
+             spectrum_id %>% strsplit(split=" "), 
+             function(x) substr(x[3],6,1000)) %>% as.double
+    )
+}
+dfsTandem <- lapply(dfsTandem, fdrDb)
+```
+
+### Plots for search with and without refinement. 
+
+```{r}
+# plots xtandem Results
+histsTandem <- lapply(dfsTandem,evalTargetDecoysHist, score="score", decoy="is_decoy", log10=FALSE)
+ppPlotsTandem <- lapply(dfsTandem,evalTargetDecoysPPPlot, score="score", decoy="is_decoy", log10=FALSE)
+
+noRefineId <- which(grepl("no-refine",tandemFiles))
+refineId <- which(!grepl("no-refine",tandemFiles))
+
+ggsave( 
+  "./figs/figTandemRefineSwissHistPP.png", 
+  plot =  gridExtra::grid.arrange(
+       histsTandem[[refineId]] + 
+         geom_histogram(bins=50, position="identity",alpha=.9) +
+         ylim(0,1500) +
+         xlim(-6.2,35) +
+         ggtitle(NULL) +
+         theme(legend.position = c(0.75,0.75)),
+       ppPlotsTandem[[refineId]] + 
+         ggtitle(NULL) +
+         ylim(0,.6), 
+       ncol=2),
+  device = "png", 
+  width = 7.8, 
+  height = 3.9)
+ggsave(
+  "./figs/figTandemNoRefineSwissHistPP.png", 
+  plot = gridExtra::grid.arrange(
+       histsTandem[[noRefineId]] + 
+        geom_histogram(bins=50, position="identity",alpha=.9) +
+         ylim(0,1500) + 
+         xlim(-6.2,35) +
+         ggtitle(NULL) + 
+         theme(legend.position = c(0.75,0.75)),
+       ppPlotsTandem[[noRefineId]] + 
+         ggtitle(NULL) +
+         ylim(0,.6), 
+       ncol=2),
+  device = "png", 
+  width = 7.8, 
+  height = 3.9)
+```
+
+### Plot to stratify refinement searched peptides
+
+Calculate 1% FDR threshold for plot 
+
+```{r}
+thresh <- dfsTandem[[refineId]] %>%  
+  filter(FDR < 0.01) %>% 
+  pull(score) %>% 
+  min
+```
+
+Identify type of PSM: same match, swiched match or new spectrum upon refinement. 
+
+```{r}
+dfsTandem[[refineId]]$refine <- "switched"
+dfsTandem[[refineId]]$inNoRefine <- dfsTandem[[refineId]]$spectrum_id %in% dfsTandem[[noRefineId]]$spectrum_id
+
+dfsTandem[[refineId]]$refine[!dfsTandem[[refineId]]$inNoRefine] <- "new"
+
+dfRefineCommon <- dfsTandem[[refineId]] %>% filter(inNoRefine)
+
+dfsTandem[[noRefineId]]$inRefine <- dfsTandem[[noRefineId]]$spectrum_id %in% dfsTandem[[refineId]]$spectrum_id
+dfNoRefineCommon <- dfsTandem[[noRefineId]] %>% filter(inRefine)
+dfRefineCommon$refine[dfRefineCommon$peptidoform ==dfNoRefineCommon$peptidoform] <-"same"
+
+dfsTandem[[refineId]]$refine[dfsTandem[[refineId]]$inNoRefine] <- dfRefineCommon$refine
+dfsTandem[[refineId]]$refineTD <- paste(dfsTandem[[refineId]]$refine,ifelse(dfsTandem[[refineId]]$is_decoy,"decoy","target")) %>% factor(levels=c("same target","same decoy","new target","switched target","new decoy","switched decoy"))
+```
+
+Construct figure with histograms stratefied according to PSM type. 
+
+```{r}
+figsTandemSwissRefinementHistPsmType <- dfsTandem[[refineId]] %>% 
+  ggplot(aes(x=score,fill=refineTD, col = I("black"))) +
+  geom_histogram(bins=50, position="identity",alpha=.9) +   
+  scale_fill_manual("values" = c(`same target` = "#009900",`same decoy` = "#FF9900", `new target` = "#5df542", `new decoy`="#c03600",`switched target`="#42f5c8",`switched decoy` = "#f54281")) +
+  theme_bw() + 
+  theme(plot.title = element_text(size = rel(1.5)), 
+        axis.title = element_text(size = rel(1.2)), 
+        axis.text = element_text(size = rel(1.2)), 
+        axis.title.y = element_text(angle = 0))
+
+psmType <- dfsTandem[[refineId]] %>% pull(refineTD) %>% table
+pi0 <- sum(dfsTandem[[refineId]]$is_decoy)/ sum(!dfsTandem[[refineId]]$is_decoy)
+piSame <- psmType["same decoy"]/sum(!dfsTandem[[refineId]]$is_decoy)
+piSameNew <- (psmType["same decoy"]+psmType["new decoy"])/sum(!dfsTandem[[refineId]]$is_decoy)
+piSameNewSwitch <- (psmType["same decoy"]+psmType["new decoy"] + psmType["switched decoy"])/sum(!dfsTandem[[refineId]]$is_decoy)
+piSameNewSwitchNewTarget <- (psmType["same decoy"]+psmType["new decoy"] + psmType["switched decoy"] + psmType["new target"])/sum(!dfsTandem[[refineId]]$is_decoy)
+
+ggsave("./figs/figTandemRefineSwissPSMtypeHistPP.png", 
+       plot= gridExtra::grid.arrange(
+         figsTandemSwissRefinementHistPsmType +
+           ggtitle(NULL) +
+           ylab(NULL) +
+           xlim(-6.2,35) +
+           theme(
+             legend.position = c(0.73,0.68),
+             legend.title = element_blank()) +
+                    annotate("rect", xmin = thresh, xmax = 35, ymin = -10, ymax = 1500, alpha = .2) + 
+      annotate(geom="text", x=thresh+1, y=1400, label="x > t['1% FDR']",
+              color="black",hjust=0 ,parse=TRUE) +
+        annotate(geom="rect",xmin=thresh,xmax=thresh,ymin=0,ymax=1500,color="red"), 
+         ppPlotsTandem[[refineId]] + 
+           geom_polygon(aes(x=x,y=y),data=data.frame(x=c(0,1,1),y=c(0,0,piSame)),fill="#FF9900",inherit.aes = FALSE) +
+           geom_polygon(aes(x=x,y=y),data=data.frame(x=c(0,1,1),y=c(0,piSame,piSameNew)),fill="#c03600",inherit.aes = FALSE) +
+           geom_polygon(aes(x=x,y=y),data=data.frame(x=c(0,1,1),y=c(0,piSameNew,piSameNewSwitch)),fill="#f54281",inherit.aes = FALSE) +
+           geom_polygon(aes(x=x,y=y),data=data.frame(x=c(0,1,1),y=c(0,piSameNewSwitch,piSameNewSwitchNewTarget)),fill="#5df542",inherit.aes = FALSE) +
+           geom_abline(
+             slope = pi0) + 
+           geom_abline(
+             slope = piSameNewSwitchNewTarget) + 
+           ylim(0,0.6) + 
+           ggtitle(NULL), 
+         ncol=2), 
+       device = "png", 
+       width = 7.8, 
+  height = 3.9)
+```
+
+# Human sample 
+
+Make diagnostic plots for rank 1 and rank 2. 
+
+```{r}
+# P-P plot for human sample 
+path2File <- "./data/PXD028735-LFQ_Orbitrap_DDA_Human_01_uniprot-hsapiens-canonical-isoforms-crap_msgfplus-phospho.msgf.mzid.tsv"
+df <- read_tsv(path2File)
+df <- df[rowSums(sapply(crapEntries, grepl,fixed=TRUE,x = df$protein_list)) == 0,]
+
+
+ggsave(
+  filename = "./figs/figHumanMsgfPlus.png",
+  plot = gridExtra::grid.arrange(
+    evalTargetDecoysHist(
+      df %>% filter(rank==1),
+      "is_decoy",
+      "score",
+      TRUE) + 
+      ggtitle(NULL) +
+      geom_histogram(
+        bins=50, 
+        alpha=.9, 
+        position="identity") +
+      theme(
+             legend.position = c(0.75,0.75),
+             ),
+    evalTargetDecoysPPPlot(
+      df %>% filter(rank==1),
+      "is_decoy", 
+      "score",
+      TRUE) + 
+      ggtitle(NULL),
+    ncol=2
+  ),
+  device = "png", 
+  width = 7.8, 
+  height = 3.9)
+
+ggsave(
+  filename = "./figs/figHumanMsgfPlusR2.png",
+  plot = gridExtra::grid.arrange(
+     evalTargetDecoysHist(
+      df %>% filter(rank==2),
+      "is_decoy",
+      "score",
+      TRUE) + 
+      ggtitle(NULL) +
+      geom_histogram(
+        bins=50, 
+        alpha=.9,
+        position = "identity") +
+      theme(
+             legend.position = c(0.75,0.75),
+             ),
+    evalTargetDecoysPPPlot(
+      df %>% filter(rank==2),
+      "is_decoy", 
+      "score",
+      TRUE) + 
+      ggtitle(NULL),
+    ncol=2
+  ),
+  device = "png", 
+  width = 7.8, 
+  height = 3.9)
+```
+
+# Immunopeptidomics 
+
+Make diagnostic plots 
+
+```{r}
+# plot immunopeptidomics plot
+path2File <- "./data/immunopeptidomics_msms_IAA.txt"
+df <- read_tsv(path2File)
+
+ggsave(
+  filename = "./figs/figPeptidomics.png",
+  plot = gridExtra::grid.arrange(
+    evalTargetDecoysHist(df,"is_decoy", "score",FALSE) + 
+      geom_histogram(
+        bins=50, 
+        alpha=.9, 
+        position="identity") +
+      ggtitle(NULL) +
+      theme(
+             legend.position = c(0.3,0.7),
+             ),
+    evalTargetDecoysPPPlot(df,"is_decoy", "score",FALSE) + 
+      xlab("Fd") + 
+      ylab("Ft") +
+      ggtitle(NULL),
+    ncol=2
+  ),
+  device = "png", 
+  width = 7.8, 
+  height = 3.9)
+```
+
+# Joint P-Plot 
+
+Put searches of MSGF+ and XTandem with refinement on one plot. 
+
+```{r}
+# Joint PP-plot
+msgfId <- which(
+  grepl(pattern="swissprot",msgfFiles,fixed = TRUE) & grepl(pattern="pfuriosus",msgfFiles,fixed = TRUE)
+  ) 
+
+h <- TargetDecoy:::processObjects(
+  list(dfsTandem[[refineId]],dfsmsgf[[msgfId]] %>% filter(rank==1)),
+  decoy=c("is_decoy","is_decoy"),
+  score=c("score","score"),
+  log10=c(FALSE,TRUE)
+  ) %>% 
+  TargetDecoy:::ppScoresData()
+ggsave(
+  file = "./figs/figTandemMsGfSwissCombindedPP.png",
+  plot = h$df %>%
+    ggplot(
+      aes(Fdp,z,color=id%>%as.factor)) + 
+    geom_point() +
+    geom_abline(slope=0) + 
+    theme_bw() + 
+    theme(legend.title = element_blank(),
+          legend.position = c(0.2,.85)) +
+    ylab("Ft-pi0") +
+    scale_color_discrete(labels=c("X!Tandem","MSGF+")) +
+    xlab("Fd"),
+  device = "png", 
+  width = 3.9, 
+  height = 3.9)
+```
+
+
+
+

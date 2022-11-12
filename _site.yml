@@ -1,0 +1,24 @@
+name : "TargetDecoyQCPaper"
+title : "Quality control for the target decoy approach for peptide identification"
+navbar:
+  title: "TargetDecoyQC"
+  left:
+    - icon: fa-home
+      href: index.html
+
+    - text: "Materials"
+      icon: fa-chalkboard-teacher
+      menu:
+      - text: paper_figures
+        href: paper_figures.html
+      - text: paper_supplementary
+        href: paper_supplementary.pdf
+
+
+right:
+    - icon: fab fa-github
+      href: https://github.com/statOmics/TargetDecoyPaper
+    - text: "statOmics"
+      href: http://statomics.github.io/
+
+new_session: true

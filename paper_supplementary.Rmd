@@ -1,0 +1,63 @@
+---
+title: "Supplementary Figures: Quality control for the target decoy approach for peptide identification"
+author: 
+  Elke Debrie$^1$
+  Milan Malfait$^1$
+  Ralf Gabriels$^{2,3}$
+  Arthur Declerq$^{2,3}$
+  Adriaan Sticker$^{2,3}$
+  Lennart Martens$^{2,3}$
+  Lieven Clement$^{1,4}$
+date: 
+  $^1$ Department of Applied Mathematics, Computer Science and Statistics, Ghent University, Ghent, Belgium \newline
+  $^2$ VIB-UGent Center for Medical Biotechnology, VIB, Zwijnaarde, Belgium \newline
+  $^3$ Department of Biomolecular Medicine, Ghent University, Ghent, Belgium \newline
+  $^4$ Corresponding Author$:$ lieven.clement@ugent.be
+output: 
+  bookdown::pdf_document2:
+    keep_tex: yes
+    latex_engine: xelatex
+    citation_package: natbib
+    toc: no
+link-citations: yes
+bibliography: [biblio.bib]
+biblio-style: biochem
+linkcolor: blue
+urlcolor: blue
+citecolor: blue
+---
+
+\setcitestyle{super,open={[},close={]}}
+\def\citenumfont{}
+
+
+(ref:Figure1)  Histogram and PP-plot for a concatenated search on a *Pyrococcus* run against a database of canonical *P. furiosus* sequences from Swiss-Prot using X!Tandem without refinement. Both the histogram and the P-P plot show no violation of the TDA assumptions.
+ 
+
+```{r sFig1, echo=FALSE, fig.cap="(ref:Figure1)",out.width="99%"}
+knitr::include_graphics("./figs/figTandemNoRefineSwissHistPP.png")
+```
+
+
+(ref:Figure2)  Histogram and PP-plot for a concatenated search on a *H. sapiens* run against a database of *H. Sapiens* sequences from UniProt using MS-GF+. Both the histogram and the P-P plot show no violation of the TDA assumptions.
+
+
+```{r sFig2, echo=FALSE, fig.cap="(ref:Figure2)",out.width="99%"}
+knitr::include_graphics("./figs/figHumanMsgfPlus.png")
+```
+
+
+(ref:Figure3)  Histogram and PP-plot for a concatenated search on an immunopeptidomics run using Andromeda. Both the histogram and the P-P plot show no violation of the TDA assumptions.
+ 
+
+```{r sFig3, echo=FALSE, fig.cap="(ref:Figure3)",out.width="99%"}
+knitr::include_graphics("./figs/figPeptidomics.png")
+```
+
+
+(ref:Figure4)  Histogram and PP-plot for rank 2 target and decoy PSM scores of a concatenated search on a H. sapiens run against a database of H. Sapiens sequences from UniProt using MS-GF+. 
+ 
+
+```{r sFig4, echo=FALSE, fig.cap="(ref:Figure4)",out.width="99%"}
+knitr::include_graphics("./figs/figHumanMsgfPlusR2.png")
+```

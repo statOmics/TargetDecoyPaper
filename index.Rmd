@@ -1,0 +1,22 @@
+---
+title: Quality control for the target decoy approach for peptide identification
+output:
+    html_document:
+      code_download: false
+      toc: false
+      toc_float: false
+      number_sections: false
+
+---
+
+
+```{r setup, include=FALSE, cache=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+***
+
+This repo contains all necessary files to perform all data analyses and generate all figures for our paper: "Quality control for the target decoy approach for peptide identification"
+
+Generate all figures: [paper_figures](./paper_figures.html)
+Document with supplementary figures: [supplementary_figures](./paper_supplementary.pdf)
