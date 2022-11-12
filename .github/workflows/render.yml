@@ -6,6 +6,8 @@ on:
 
 ## If you need to clear the cache, update the number inside cache-version as
 ## discussed at https://github.com/r-lib/actions/issues/86.
+## Note that you can always run a GHA test without the cache by using the word
+## "/nocache" in the commit message.
 env:
   cache-version: 1
 
@@ -15,14 +17,13 @@ jobs:
 
     steps:
       - name: Check out repo
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+        uses: actions/checkout@v2
 
       - name: Set up R
         uses: r-lib/actions/setup-r@v2
         with:
-          r-version: '4.2'
+          r-version: '4.1'
+          crayon.enabled: 'FALSE'
 
       - name: Set up pandoc
         uses: r-lib/actions/setup-pandoc@v2
@@ -43,10 +44,6 @@ jobs:
         if: runner.os == 'linux'
         run: sudo apt-get -y install libmagick++-dev
 
-      - name: Install libnetcdf-dev on Linux
-        if: runner.os == 'linux'
-        run: sudo apt-get -y install libnetcdf-dev  
-        
       - name: Set up renv
         uses: r-lib/actions/setup-renv@v2
         with:
@@ -60,6 +57,14 @@ jobs:
           sessioninfo::session_info(pkgs, include_base = TRUE)
         shell: Rscript {0}
 
+      - name: Cache knitr results
+        if: "!contains(github.event.head_commit.message, '/nocache')"
+        uses: actions/cache@v2
+        with:
+          path: '**/*_cache'
+          key: cache-version-${{ env.cache-version }}-knitr-${{ runner.os }}
+          restore-keys: cache-version-${{ env.cache-version }}-knitr-
+
       - name: Render site
         run: |
           rmarkdown::render_site()
@@ -67,8 +72,9 @@ jobs:
 
       - name: Deploy 🚀
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-        uses: JamesIves/github-pages-deploy-action@v4.2.5
+        uses: JamesIves/github-pages-deploy-action@3.6.2
         with:
+          ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BRANCH: gh-pages
           FOLDER: _site
 
