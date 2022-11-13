@@ -1,10 +1,17 @@
 % Options for packages loaded elsewhere
+% Motified template from 
+% https://github.com/jgm/pandoc/blob/master/data/templates/default.latex
+% Removed author
+% Removed natbib
+% to comply with achemso document class
+% authors in author.tex via includes: in_header:
 \PassOptionsToPackage{unicode}{hyperref}
 \PassOptionsToPackage{hyphens}{url}
 \PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
 %
 \documentclass[
-]{article}
+  journal=jprobs,
+  manuscript=article]{achemso}
 \usepackage{amsmath,amssymb}
 \usepackage{lmodern}
 \usepackage{iftex}
@@ -34,7 +41,6 @@
   \KOMAoptions{parskip=half}}
 \makeatother
 \usepackage{xcolor}
-\usepackage[margin=1in]{geometry}
 \usepackage{longtable,booktabs,array}
 \usepackage{calc} % for calculating minipage widths
 % Correct order of tables after \paragraph or \subparagraph
@@ -45,34 +51,57 @@
 % Allow footnotes in longtable head/foot
 \IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
 \makesavenoteenv{longtable}
-\usepackage{graphicx}
-\makeatletter
-\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
-\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
-\makeatother
-% Scale images if necessary, so that they will not overflow the page
-% margins by default, and it is still possible to overwrite the defaults
-% using explicit options in \includegraphics[width, height, ...]{}
-\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
-% Set default figure placement to htbp
-\makeatletter
-\def\fps@figure{htbp}
-\makeatother
 \setlength{\emergencystretch}{3em} % prevent overfull lines
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 \setcounter{secnumdepth}{5}
+
+\author{Elke Debrie}
+\affiliation[Ghent University]
+{Department of Applied Mathematics, Computer Science and Statistics, Ghent University, Ghent University, Ghent, Belgium}
+
+\author{Milan Malfait}
+\affiliation[Ghent University]
+{Department of Applied Mathematics, Computer Science and Statistics, Ghent University, Ghent University, Ghent, Belgium}
+
+\author{Ralf Gabriels}
+\affiliation[VIB-UGent]
+{VIB-UGent Center for Medical Biotechnology, VIB, Zwijnaarde, Belgium}
+\alsoaffiliation[Ghent University]
+{Department of Biomolecular Medicine, Ghent University, Ghent, Belgium}
+
+\author{Arthur Declerq}
+\affiliation[VIB-UGent]
+{VIB-UGent Center for Medical Biotechnology, VIB, Zwijnaarde, Belgium}
+\alsoaffiliation[Ghent University]
+{Department of Biomolecular Medicine, Ghent University, Ghent, Belgium}
+
+\author{Adriaan Sticker}
+\affiliation[Ghent University]{Department of Applied Mathematics, Computer Science and Statistics, Ghent University, Ghent University, Ghent, Belgium}
+\alsoaffiliation[VIB-UGent]
+{VIB-UGent Center for Medical Biotechnology, VIB, Zwijnaarde, Belgium}
+\alsoaffiliation[Ghent University]
+{Department of Biomolecular Medicine, Ghent University, Ghent, Belgium}
+
+\author{Lennart Martens}
+\affiliation[VIB-UGent]
+{VIB-UGent Center for Medical Biotechnology, VIB, Zwijnaarde, Belgium}
+\alsoaffiliation[Ghent University]
+{Department of Biomolecular Medicine, Ghent University, Ghent, Belgium}
+
+\author{Lieven Clement}
+\affiliation[Ghent University]{Department of Applied Mathematics, Computer Science and Statistics, Ghent University, Ghent University, Ghent, Belgium}
+\email{lieven.clement@ugent.be}
 \ifLuaTeX
   \usepackage{selnolig}  % disable illegal ligatures
 \fi
-\usepackage[]{natbib}
-\bibliographystyle{biochem}
+%natbib deleted from template
+
 \IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
 \urlstyle{same} % disable monospaced font for URLs
 \hypersetup{
   pdftitle={Supplementary Figures: Quality control for the target decoy approach for peptide identification},
-  pdfauthor={Elke Debrie\^{}1 Milan Malfait\^{}1 Ralf Gabriels\^{}\{2,3\} Arthur Declerq\^{}\{2,3\} Adriaan Sticker\^{}\{2,3\} Lennart Martens\^{}\{2,3\} Lieven Clement\^{}\{1,4\}},
   colorlinks=true,
   linkcolor={blue},
   filecolor={Maroon},
@@ -81,14 +110,23 @@
   pdfcreator={LaTeX via pandoc}}
 
 \title{Supplementary Figures: Quality control for the target decoy approach for peptide identification}
-\author{Elke Debrie\(^1\) Milan Malfait\(^1\) Ralf Gabriels\(^{2,3}\) Arthur Declerq\(^{2,3}\) Adriaan Sticker\(^{2,3}\) Lennart Martens\(^{2,3}\) Lieven Clement\(^{1,4}\)}
-\date{\(^1\) Department of Applied Mathematics, Computer Science and Statistics, Ghent University, Ghent, Belgium \newline \(^2\) VIB-UGent Center for Medical Biotechnology, VIB, Zwijnaarde, Belgium \newline \(^3\) Department of Biomolecular Medicine, Ghent University, Ghent, Belgium \newline \(^4\) Corresponding Author\(:\) \href{mailto:lieven.clement@ugent.be}{\nolinkurl{lieven.clement@ugent.be}}}
+% remove author
+\date{}
 
 \begin{document}
 \maketitle
 
-\setcitestyle{super,open={[},close={]}}
-\def\citenumfont{}
+\begin{verbatim}
+## tlmgr install achemso
+\end{verbatim}
+
+\begin{verbatim}
+## tlmgr install caption
+\end{verbatim}
+
+\begin{verbatim}
+## tlmgr install setspace
+\end{verbatim}
 
 
 
