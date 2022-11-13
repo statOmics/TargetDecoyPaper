@@ -15,7 +15,7 @@ navbar:
         href: paper_supplementary.pdf
 
 
-right:
+  right:
     - icon: fab fa-github
       href: https://github.com/statOmics/TargetDecoyPaper
     - text: "statOmics"
