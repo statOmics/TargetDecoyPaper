@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Quality control for the target decoy approach for peptide identification</title>
+
+<script src="site_libs/header-attrs-2.18/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<script src="site_libs/navigation-1.1/sourceembed.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #c4a000; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #000000; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #000000; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #000000; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+
+.sourceCode .row {
+  width: 100%;
+}
+.sourceCode {
+  overflow-x: auto;
+}
+.code-folding-btn {
+  margin-right: -30px;
+}
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+<style type="text/css">
+#rmd-source-code {
+  display: none;
+}
+</style>
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">TargetDecoyQC</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <span class="fa fa-chalkboard-teacher"></span>
+     
+    Materials
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="paper_figures.html">paper_figures</a>
+    </li>
+    <li>
+      <a href="paper_supplementary.pdf">paper_supplementary</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+<li role="separator" class="divider"></li>
+<li><a id="rmd-download-source" href="#">Download Rmd</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Quality control for the target decoy
+approach for peptide identification</h1>
+<h4 class="author">Lieven Clement</h4>
+<address class="author_afil">
+Ghent University<br>
+</div>
+
+
+<div id="load-libraries" class="section level1" number="1">
+<h1><span class="header-section-number">1</span> load libraries</h1>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>({</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(TargetDecoy)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(RCurl)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div>
+</div>
+<div id="download-data-from-zenodo" class="section level1" number="2">
+<h1><span class="header-section-number">2</span> Download data from
+Zenodo</h1>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Download data from zenodo</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">timeout=</span><span class="dv">300</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>url <span class="ot">&lt;-</span> <span class="st">&quot;https://zenodo.org/record/7308022/files/search-results.zip?download=1&quot;</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>destFile <span class="ot">&lt;-</span> <span class="st">&quot;searchResults.zip&quot;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">file.exists</span>(destFile)) <span class="fu">download.file</span>(url, destFile)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">unzip</span>(destFile, <span class="at">exdir =</span> <span class="st">&quot;./data&quot;</span>, <span class="at">overwrite =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+</div>
+<div id="pyrococcus" class="section level1" number="3">
+<h1><span class="header-section-number">3</span> Pyrococcus</h1>
+<div id="import-pyrococcus-data-in-r" class="section level2"
+number="3.1">
+<h2><span class="header-section-number">3.1</span> Import Pyrococcus
+Data in R</h2>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>allTsvFiles <span class="ot">&lt;-</span> <span class="fu">list.files</span>(<span class="at">path=</span><span class="st">&quot;data&quot;</span>,<span class="at">pattern=</span><span class="st">&quot;.tsv$&quot;</span>,<span class="at">full.names =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>msgfFiles <span class="ot">&lt;-</span> allTsvFiles[<span class="fu">grepl</span>(<span class="st">&quot;msgf&quot;</span>,allTsvFiles)<span class="sc">&amp;</span><span class="fu">grepl</span>(<span class="st">&quot;PXD001077&quot;</span>,allTsvFiles)]</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>dfsmsgf <span class="ot">&lt;-</span> <span class="fu">lapply</span>(msgfFiles, read_tsv)</span></code></pre></div>
+<pre><code>## Rows: 136982 Columns: 34
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: &quot;\t&quot;
+## chr  (8): peptidoform, spectrum_id, run, protein_list, source, provenance:mz...
+## dbl (22): score, precursor_mz, retention_time, rank, meta:calculatedMassToCh...
+## lgl  (4): collection, is_decoy, qvalue, pep
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+## Rows: 126277 Columns: 34
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: &quot;\t&quot;
+## chr  (8): peptidoform, spectrum_id, run, protein_list, source, provenance:mz...
+## dbl (22): score, precursor_mz, retention_time, rank, meta:calculatedMassToCh...
+## lgl  (4): collection, is_decoy, qvalue, pep
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>crapEntries <span class="ot">&lt;-</span> <span class="fu">scan</span>(<span class="st">&quot;db-gpm-crap-entries.txt&quot;</span>, <span class="at">what =</span> <span class="st">&quot;character&quot;</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>dfsmsgf <span class="ot">&lt;-</span> <span class="fu">lapply</span>(dfsmsgf, <span class="cf">function</span>(db) </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  db[<span class="fu">rowSums</span>(<span class="fu">sapply</span>(crapEntries, grepl,<span class="at">fixed=</span><span class="cn">TRUE</span>,<span class="at">x =</span> db<span class="sc">$</span>protein_list)) <span class="sc">==</span> <span class="dv">0</span>,])</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>tandemFiles <span class="ot">&lt;-</span> allTsvFiles[<span class="fu">grepl</span>(<span class="st">&quot;xtandem&quot;</span>,allTsvFiles)<span class="sc">&amp;</span><span class="fu">grepl</span>(<span class="st">&quot;PXD001077&quot;</span>,allTsvFiles)]</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>dfsTandem <span class="ot">&lt;-</span> <span class="fu">lapply</span>(tandemFiles, read_tsv)</span></code></pre></div>
+<pre><code>## Rows: 12586 Columns: 18
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: &quot;\t&quot;
+## chr (5): peptidoform, spectrum_id, protein_list, source, provenance:xtandem_...
+## dbl (7): score, precursor_mz, retention_time, provenance:xtandem_id, meta:xt...
+## lgl (6): run, collection, is_decoy, qvalue, pep, rank
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+## Rows: 13949 Columns: 18
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: &quot;\t&quot;
+## chr (5): peptidoform, spectrum_id, protein_list, source, provenance:xtandem_...
+## dbl (7): score, precursor_mz, retention_time, provenance:xtandem_id, meta:xt...
+## lgl (6): run, collection, is_decoy, qvalue, pep, rank
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>dfsTandem <span class="ot">&lt;-</span> <span class="fu">lapply</span>(dfsTandem, <span class="cf">function</span>(db) </span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  db[<span class="fu">rowSums</span>(<span class="fu">sapply</span>(crapEntries, grepl,<span class="at">fixed=</span><span class="cn">TRUE</span>,<span class="at">x =</span> db<span class="sc">$</span>protein_list)) <span class="sc">==</span> <span class="dv">0</span>,])</span></code></pre></div>
+</div>
+<div id="fdr-function" class="section level2" number="3.2">
+<h2><span class="header-section-number">3.2</span> FDR function</h2>
+<p>Calculate FDR on tibble with search results. It is assumed that
+higher scores are better.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># FDR function</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>fdrDb <span class="ot">&lt;-</span> <span class="cf">function</span>(db)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  db <span class="ot">&lt;-</span> db <span class="sc">%&gt;%</span> </span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">arrange</span>(<span class="fu">desc</span>(score)) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">FP =</span> <span class="fu">cumsum</span>(is_decoy),</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>           <span class="at">FDR =</span> <span class="fu">cumsum</span>(is_decoy)<span class="sc">/</span><span class="fu">cumsum</span>(<span class="sc">!</span>is_decoy))</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  FDR <span class="ot">&lt;-</span> db<span class="sc">$</span>FDR</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  FDRmin <span class="ot">&lt;-</span> FDR[<span class="fu">length</span>(FDR)]</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (j <span class="cf">in</span> (<span class="fu">length</span>(FDR)<span class="sc">-</span><span class="dv">1</span>)<span class="sc">:</span><span class="dv">1</span>)</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  {</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (FDR[j] <span class="sc">&lt;</span> FDRmin)</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>      FDRmin <span class="ot">&lt;-</span> FDR[j] <span class="cf">else</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>      FDR[j] <span class="ot">&lt;-</span> FDRmin   </span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>  db<span class="sc">$</span>FDR <span class="ot">&lt;-</span> FDR</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>  db <span class="ot">&lt;-</span> db <span class="sc">%&gt;%</span> </span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">arrange</span>(spectrum_id) </span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(db)</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+</div>
+<div id="generate-plots-for-msgf" class="section level2" number="3.3">
+<h2><span class="header-section-number">3.3</span> Generate plots for
+MSGF+</h2>
+<p>Histograms and P-P plots for rank1, rank 2 and search against human
+DB.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate MSGF+ plots pyrococcus</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>histsMsgf <span class="ot">&lt;-</span> <span class="fu">lapply</span>(dfsmsgf,<span class="cf">function</span>(db, score, decoy, log10) <span class="fu">evalTargetDecoysHist</span>(db <span class="sc">%&gt;%</span> <span class="fu">filter</span>(rank<span class="sc">==</span><span class="dv">1</span>), decoy, score, log10) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">&quot;Score&quot;</span>) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="cn">NULL</span>) <span class="sc">+</span>   <span class="fu">geom_histogram</span>(<span class="at">bins=</span><span class="dv">50</span>, <span class="at">position=</span><span class="st">&quot;identity&quot;</span>,<span class="at">alpha=</span>.<span class="dv">9</span>), <span class="at">score=</span><span class="st">&quot;score&quot;</span>, <span class="at">decoy=</span><span class="st">&quot;is_decoy&quot;</span>, <span class="at">log10=</span><span class="cn">TRUE</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>histsMsgfR2 <span class="ot">&lt;-</span> <span class="fu">lapply</span>(dfsmsgf,<span class="cf">function</span>(db, score, decoy, log10) <span class="fu">evalTargetDecoysHist</span>(db <span class="sc">%&gt;%</span> <span class="fu">filter</span>(rank<span class="sc">==</span><span class="dv">2</span>), decoy, score, log10) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">&quot;Score&quot;</span>) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="cn">NULL</span>) <span class="sc">+</span>  <span class="fu">geom_histogram</span>(<span class="at">bins=</span><span class="dv">50</span>, <span class="at">position=</span><span class="st">&quot;identity&quot;</span>,<span class="at">alpha=</span>.<span class="dv">9</span>)   </span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>, <span class="at">score=</span><span class="st">&quot;score&quot;</span>, <span class="at">decoy=</span><span class="st">&quot;is_decoy&quot;</span>, <span class="at">log10=</span><span class="cn">TRUE</span>)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>ppPlotsMsgf <span class="ot">&lt;-</span> <span class="fu">lapply</span>(dfsmsgf,<span class="cf">function</span>(db, score, decoy, log10) <span class="fu">evalTargetDecoysPPPlot</span>(db <span class="sc">%&gt;%</span> <span class="fu">filter</span>(rank<span class="sc">==</span><span class="dv">1</span>), decoy, score, log10) <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="cn">NULL</span>) <span class="sc">+</span><span class="fu">xlab</span>(<span class="st">&quot;Fd&quot;</span>)<span class="sc">+</span><span class="fu">ylab</span>(<span class="st">&quot;Ft&quot;</span>), <span class="at">score=</span><span class="st">&quot;score&quot;</span>, <span class="at">decoy=</span><span class="st">&quot;is_decoy&quot;</span>, <span class="at">log10=</span><span class="cn">TRUE</span>)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>pyroId <span class="ot">&lt;-</span> <span class="fu">which</span>(</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">grepl</span>(<span class="at">pattern=</span><span class="st">&quot;swissprot&quot;</span>,msgfFiles,<span class="at">fixed =</span> <span class="cn">TRUE</span>) <span class="sc">&amp;</span> <span class="fu">grepl</span>(<span class="at">pattern=</span><span class="st">&quot;pfuriosus&quot;</span>,msgfFiles,<span class="at">fixed =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  ) </span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>dfHlp <span class="ot">&lt;-</span> dfsmsgf[[pyroId]]  <span class="sc">%&gt;%</span> </span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(rank<span class="sc">==</span><span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">score =</span> <span class="sc">-</span><span class="fu">log10</span>(score)) <span class="sc">%&gt;%</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fdrDb</span>()</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>thresh <span class="ot">&lt;-</span> dfHlp <span class="sc">%&gt;%</span>  </span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(FDR <span class="sc">&lt;</span> <span class="fl">0.01</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(score) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>  min</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>nSig <span class="ot">&lt;-</span> dfHlp <span class="sc">%&gt;%</span> <span class="fu">filter</span>(FDR <span class="sc">&lt;</span> <span class="fl">0.01</span>) <span class="sc">%&gt;%</span> <span class="fu">pull</span>(is_decoy) <span class="sc">%&gt;%</span> <span class="st">`</span><span class="at">!</span><span class="st">`</span> <span class="sc">%&gt;%</span> sum</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>humanId <span class="ot">&lt;-</span> <span class="fu">which</span>(</span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">grepl</span>(<span class="at">pattern=</span><span class="st">&quot;swissprot&quot;</span>,msgfFiles,<span class="at">fixed =</span> <span class="cn">TRUE</span>) <span class="sc">&amp;</span> <span class="fu">grepl</span>(<span class="at">pattern=</span><span class="st">&quot;hsapiens&quot;</span>,msgfFiles,<span class="at">fixed =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>  ) </span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>( </span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;./figs/figMsgfSwissHistsPyroR1R2_Human.png&quot;</span>, </span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">plot =</span>  </span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>    gridExtra<span class="sc">::</span><span class="fu">grid.arrange</span>(</span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>      histsMsgf[[pyroId]] <span class="sc">+</span></span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>        <span class="fu">geom_histogram</span>(</span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>          <span class="at">bins=</span><span class="dv">50</span>, </span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>          <span class="at">position=</span><span class="st">&quot;identity&quot;</span>,</span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>          <span class="at">alpha=</span>.<span class="dv">9</span>) <span class="sc">+</span></span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>         <span class="fu">ggtitle</span>(<span class="fu">paste</span>(nSig,<span class="st">&quot;target PSMs at 1% FDR&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a>        <span class="fu">annotate</span>(<span class="st">&quot;rect&quot;</span>, <span class="at">xmin =</span> thresh, <span class="at">xmax =</span> <span class="dv">35</span>, <span class="at">ymin =</span> <span class="sc">-</span><span class="dv">10</span>, <span class="at">ymax =</span> <span class="dv">1600</span>, <span class="at">alpha =</span> .<span class="dv">2</span>) <span class="sc">+</span> </span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a>      <span class="fu">annotate</span>(<span class="at">geom=</span><span class="st">&quot;text&quot;</span>, <span class="at">x=</span>thresh<span class="sc">+</span><span class="dv">1</span>, <span class="at">y=</span><span class="dv">1500</span>, <span class="at">label=</span><span class="st">&quot;x &gt; t[&#39;1% FDR&#39;]&quot;</span>,</span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>              <span class="at">color=</span><span class="st">&quot;black&quot;</span>,<span class="at">hjust=</span><span class="dv">0</span> ,<span class="at">parse=</span><span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a>        <span class="fu">annotate</span>(<span class="at">geom=</span><span class="st">&quot;rect&quot;</span>,<span class="at">xmin=</span>thresh,<span class="at">xmax=</span>thresh,<span class="at">ymin=</span><span class="dv">0</span>,<span class="at">ymax=</span><span class="dv">1600</span>,<span class="at">color=</span><span class="st">&quot;red&quot;</span>)<span class="sc">+</span></span>
+<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a>         <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="fu">c</span>(<span class="fl">0.75</span>,<span class="fl">0.75</span>)),</span>
+<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a>    histsMsgfR2[[pyroId]] <span class="sc">+</span> </span>
+<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a>         <span class="fu">geom_histogram</span>(</span>
+<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a>           <span class="at">bins=</span><span class="dv">50</span>, </span>
+<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a>           <span class="at">position=</span><span class="st">&quot;identity&quot;</span>,</span>
+<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a>           <span class="at">alpha=</span>.<span class="dv">9</span>) <span class="sc">+</span></span>
+<span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a>         <span class="fu">ggtitle</span>(<span class="st">&quot;Rank 2 PSMs&quot;</span>) <span class="sc">+</span></span>
+<span id="cb9-45"><a href="#cb9-45" aria-hidden="true" tabindex="-1"></a>         <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="fu">c</span>(<span class="fl">0.75</span>,<span class="fl">0.75</span>)),</span>
+<span id="cb9-46"><a href="#cb9-46" aria-hidden="true" tabindex="-1"></a>    histsMsgf[[humanId]] <span class="sc">+</span> </span>
+<span id="cb9-47"><a href="#cb9-47" aria-hidden="true" tabindex="-1"></a>         <span class="fu">geom_histogram</span>(</span>
+<span id="cb9-48"><a href="#cb9-48" aria-hidden="true" tabindex="-1"></a>           <span class="at">bins=</span><span class="dv">50</span>, </span>
+<span id="cb9-49"><a href="#cb9-49" aria-hidden="true" tabindex="-1"></a>           <span class="at">position=</span><span class="st">&quot;identity&quot;</span>,</span>
+<span id="cb9-50"><a href="#cb9-50" aria-hidden="true" tabindex="-1"></a>           <span class="at">alpha=</span>.<span class="dv">9</span>) <span class="sc">+</span></span>
+<span id="cb9-51"><a href="#cb9-51" aria-hidden="true" tabindex="-1"></a>         <span class="fu">ggtitle</span>(<span class="st">&quot;Spectra matched to H. sapiens&quot;</span>) <span class="sc">+</span></span>
+<span id="cb9-52"><a href="#cb9-52" aria-hidden="true" tabindex="-1"></a>         <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="fu">c</span>(<span class="fl">0.75</span>,<span class="fl">0.75</span>)),</span>
+<span id="cb9-53"><a href="#cb9-53" aria-hidden="true" tabindex="-1"></a>    <span class="at">ncol=</span><span class="dv">3</span>),</span>
+<span id="cb9-54"><a href="#cb9-54" aria-hidden="true" tabindex="-1"></a>  <span class="at">device =</span> <span class="st">&quot;png&quot;</span>, </span>
+<span id="cb9-55"><a href="#cb9-55" aria-hidden="true" tabindex="-1"></a>  <span class="at">width =</span> <span class="fl">11.7</span>,</span>
+<span id="cb9-56"><a href="#cb9-56" aria-hidden="true" tabindex="-1"></a>  <span class="at">height =</span> <span class="fl">3.9</span>)</span></code></pre></div>
+<p><img src="paper_figures_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>( </span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;./figs/figMsgfSwissPPplotsPyro_Human.png&quot;</span>, </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">plot =</span>  </span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    gridExtra<span class="sc">::</span><span class="fu">grid.arrange</span>(</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>      ppPlotsMsgf[[humanId]] <span class="sc">+</span> </span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>         <span class="fu">ggtitle</span>(<span class="cn">NULL</span>),</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>       ppPlotsMsgf[[pyroId]] <span class="sc">+</span> </span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>         <span class="fu">ggtitle</span>(<span class="cn">NULL</span>),</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">ncol=</span><span class="dv">2</span>),</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">device =</span> <span class="st">&quot;png&quot;</span>, </span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">width =</span> <span class="fl">7.8</span>, </span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">height =</span> <span class="fl">3.9</span>)</span></code></pre></div>
+<p><img src="paper_figures_files/figure-html/unnamed-chunk-5-2.png" width="672" /></p>
+</div>
+<div id="x-tandem-searches" class="section level2" number="3.4">
+<h2><span class="header-section-number">3.4</span> X-tandem
+searches</h2>
+<div id="preprocess-tandem-data" class="section level3" number="3.4.1">
+<h3><span class="header-section-number">3.4.1</span> Preprocess tandem
+data</h3>
+<p>Convert spectrum id into double for sorting + add FDR</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Preprocess Tandem pyrococcus results</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(dfsTandem))</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  dfsTandem[[i]] <span class="ot">&lt;-</span> dfsTandem[[i]] <span class="sc">%&gt;%</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">spectrum_id_orig =</span> spectrum_id,</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>           <span class="at">spectrum_id =</span> <span class="fu">sapply</span>(</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>             spectrum_id <span class="sc">%&gt;%</span> <span class="fu">strsplit</span>(<span class="at">split=</span><span class="st">&quot; &quot;</span>), </span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>             <span class="cf">function</span>(x) <span class="fu">substr</span>(x[<span class="dv">3</span>],<span class="dv">6</span>,<span class="dv">1000</span>)) <span class="sc">%&gt;%</span> as.double</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>dfsTandem <span class="ot">&lt;-</span> <span class="fu">lapply</span>(dfsTandem, fdrDb)</span></code></pre></div>
+</div>
+<div id="plots-for-search-with-and-without-refinement."
+class="section level3" number="3.4.2">
+<h3><span class="header-section-number">3.4.2</span> Plots for search
+with and without refinement.</h3>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plots xtandem Results</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>histsTandem <span class="ot">&lt;-</span> <span class="fu">lapply</span>(dfsTandem,evalTargetDecoysHist, <span class="at">score=</span><span class="st">&quot;score&quot;</span>, <span class="at">decoy=</span><span class="st">&quot;is_decoy&quot;</span>, <span class="at">log10=</span><span class="cn">FALSE</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>ppPlotsTandem <span class="ot">&lt;-</span> <span class="fu">lapply</span>(dfsTandem,evalTargetDecoysPPPlot, <span class="at">score=</span><span class="st">&quot;score&quot;</span>, <span class="at">decoy=</span><span class="st">&quot;is_decoy&quot;</span>, <span class="at">log10=</span><span class="cn">FALSE</span>)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>noRefineId <span class="ot">&lt;-</span> <span class="fu">which</span>(<span class="fu">grepl</span>(<span class="st">&quot;no-refine&quot;</span>,tandemFiles))</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>refineId <span class="ot">&lt;-</span> <span class="fu">which</span>(<span class="sc">!</span><span class="fu">grepl</span>(<span class="st">&quot;no-refine&quot;</span>,tandemFiles))</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>( </span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;./figs/figTandemRefineSwissHistPP.png&quot;</span>, </span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">plot =</span>  gridExtra<span class="sc">::</span><span class="fu">grid.arrange</span>(</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>       histsTandem[[refineId]] <span class="sc">+</span> </span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>         <span class="fu">geom_histogram</span>(<span class="at">bins=</span><span class="dv">50</span>, <span class="at">position=</span><span class="st">&quot;identity&quot;</span>,<span class="at">alpha=</span>.<span class="dv">9</span>) <span class="sc">+</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>         <span class="fu">ylim</span>(<span class="dv">0</span>,<span class="dv">1500</span>) <span class="sc">+</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>         <span class="fu">xlim</span>(<span class="sc">-</span><span class="fl">6.2</span>,<span class="dv">35</span>) <span class="sc">+</span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>         <span class="fu">ggtitle</span>(<span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>         <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="fu">c</span>(<span class="fl">0.75</span>,<span class="fl">0.75</span>)),</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>       ppPlotsTandem[[refineId]] <span class="sc">+</span> </span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>         <span class="fu">ggtitle</span>(<span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>         <span class="fu">ylim</span>(<span class="dv">0</span>,.<span class="dv">6</span>), </span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>       <span class="at">ncol=</span><span class="dv">2</span>),</span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">device =</span> <span class="st">&quot;png&quot;</span>, </span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">width =</span> <span class="fl">7.8</span>, </span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">height =</span> <span class="fl">3.9</span>)</span></code></pre></div>
+<pre><code>## Warning: Removed 4 rows containing missing values (`geom_bar()`).
+## Removed 4 rows containing missing values (`geom_bar()`).</code></pre>
+<p><img src="paper_figures_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;./figs/figTandemNoRefineSwissHistPP.png&quot;</span>, </span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">plot =</span> gridExtra<span class="sc">::</span><span class="fu">grid.arrange</span>(</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>       histsTandem[[noRefineId]] <span class="sc">+</span> </span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>        <span class="fu">geom_histogram</span>(<span class="at">bins=</span><span class="dv">50</span>, <span class="at">position=</span><span class="st">&quot;identity&quot;</span>,<span class="at">alpha=</span>.<span class="dv">9</span>) <span class="sc">+</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>         <span class="fu">ylim</span>(<span class="dv">0</span>,<span class="dv">1500</span>) <span class="sc">+</span> </span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>         <span class="fu">xlim</span>(<span class="sc">-</span><span class="fl">6.2</span>,<span class="dv">35</span>) <span class="sc">+</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>         <span class="fu">ggtitle</span>(<span class="cn">NULL</span>) <span class="sc">+</span> </span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>         <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="fu">c</span>(<span class="fl">0.75</span>,<span class="fl">0.75</span>)),</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>       ppPlotsTandem[[noRefineId]] <span class="sc">+</span> </span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>         <span class="fu">ggtitle</span>(<span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>         <span class="fu">ylim</span>(<span class="dv">0</span>,.<span class="dv">6</span>), </span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">ncol=</span><span class="dv">2</span>),</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">device =</span> <span class="st">&quot;png&quot;</span>, </span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">width =</span> <span class="fl">7.8</span>, </span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">height =</span> <span class="fl">3.9</span>)</span></code></pre></div>
+<pre><code>## Warning: Removed 4 rows containing missing values (`geom_bar()`).
+## Removed 4 rows containing missing values (`geom_bar()`).</code></pre>
+<p><img src="paper_figures_files/figure-html/unnamed-chunk-7-2.png" width="672" /></p>
+</div>
+<div id="plot-to-stratify-refinement-searched-peptides"
+class="section level3" number="3.4.3">
+<h3><span class="header-section-number">3.4.3</span> Plot to stratify
+refinement searched peptides</h3>
+<p>Calculate 1% FDR threshold for plot</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>thresh <span class="ot">&lt;-</span> dfsTandem[[refineId]] <span class="sc">%&gt;%</span>  </span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(FDR <span class="sc">&lt;</span> <span class="fl">0.01</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(score) <span class="sc">%&gt;%</span> </span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  min</span></code></pre></div>
+<p>Identify type of PSM: same match, swiched match or new spectrum upon
+refinement.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>dfsTandem[[refineId]]<span class="sc">$</span>refine <span class="ot">&lt;-</span> <span class="st">&quot;switched&quot;</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>dfsTandem[[refineId]]<span class="sc">$</span>inNoRefine <span class="ot">&lt;-</span> dfsTandem[[refineId]]<span class="sc">$</span>spectrum_id <span class="sc">%in%</span> dfsTandem[[noRefineId]]<span class="sc">$</span>spectrum_id</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>dfsTandem[[refineId]]<span class="sc">$</span>refine[<span class="sc">!</span>dfsTandem[[refineId]]<span class="sc">$</span>inNoRefine] <span class="ot">&lt;-</span> <span class="st">&quot;new&quot;</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>dfRefineCommon <span class="ot">&lt;-</span> dfsTandem[[refineId]] <span class="sc">%&gt;%</span> <span class="fu">filter</span>(inNoRefine)</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>dfsTandem[[noRefineId]]<span class="sc">$</span>inRefine <span class="ot">&lt;-</span> dfsTandem[[noRefineId]]<span class="sc">$</span>spectrum_id <span class="sc">%in%</span> dfsTandem[[refineId]]<span class="sc">$</span>spectrum_id</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>dfNoRefineCommon <span class="ot">&lt;-</span> dfsTandem[[noRefineId]] <span class="sc">%&gt;%</span> <span class="fu">filter</span>(inRefine)</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>dfRefineCommon<span class="sc">$</span>refine[dfRefineCommon<span class="sc">$</span>peptidoform <span class="sc">==</span>dfNoRefineCommon<span class="sc">$</span>peptidoform] <span class="ot">&lt;-</span><span class="st">&quot;same&quot;</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>dfsTandem[[refineId]]<span class="sc">$</span>refine[dfsTandem[[refineId]]<span class="sc">$</span>inNoRefine] <span class="ot">&lt;-</span> dfRefineCommon<span class="sc">$</span>refine</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>dfsTandem[[refineId]]<span class="sc">$</span>refineTD <span class="ot">&lt;-</span> <span class="fu">paste</span>(dfsTandem[[refineId]]<span class="sc">$</span>refine,<span class="fu">ifelse</span>(dfsTandem[[refineId]]<span class="sc">$</span>is_decoy,<span class="st">&quot;decoy&quot;</span>,<span class="st">&quot;target&quot;</span>)) <span class="sc">%&gt;%</span> <span class="fu">factor</span>(<span class="at">levels=</span><span class="fu">c</span>(<span class="st">&quot;same target&quot;</span>,<span class="st">&quot;same decoy&quot;</span>,<span class="st">&quot;new target&quot;</span>,<span class="st">&quot;switched target&quot;</span>,<span class="st">&quot;new decoy&quot;</span>,<span class="st">&quot;switched decoy&quot;</span>))</span></code></pre></div>
+<p>Construct figure with histograms stratefied according to PSM
+type.</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>figsTandemSwissRefinementHistPsmType <span class="ot">&lt;-</span> dfsTandem[[refineId]] <span class="sc">%&gt;%</span> </span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>score,<span class="at">fill=</span>refineTD, <span class="at">col =</span> <span class="fu">I</span>(<span class="st">&quot;black&quot;</span>))) <span class="sc">+</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins=</span><span class="dv">50</span>, <span class="at">position=</span><span class="st">&quot;identity&quot;</span>,<span class="at">alpha=</span>.<span class="dv">9</span>) <span class="sc">+</span>   </span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="st">&quot;values&quot;</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">`</span><span class="at">same target</span><span class="st">`</span> <span class="ot">=</span> <span class="st">&quot;#009900&quot;</span>,<span class="st">`</span><span class="at">same decoy</span><span class="st">`</span> <span class="ot">=</span> <span class="st">&quot;#FF9900&quot;</span>, <span class="st">`</span><span class="at">new target</span><span class="st">`</span> <span class="ot">=</span> <span class="st">&quot;#5df542&quot;</span>, <span class="st">`</span><span class="at">new decoy</span><span class="st">`</span><span class="ot">=</span><span class="st">&quot;#c03600&quot;</span>,<span class="st">`</span><span class="at">switched target</span><span class="st">`</span><span class="ot">=</span><span class="st">&quot;#42f5c8&quot;</span>,<span class="st">`</span><span class="at">switched decoy</span><span class="st">`</span> <span class="ot">=</span> <span class="st">&quot;#f54281&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="fu">rel</span>(<span class="fl">1.5</span>)), </span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="fu">rel</span>(<span class="fl">1.2</span>)), </span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="fu">rel</span>(<span class="fl">1.2</span>)), </span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.title.y =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">0</span>))</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>psmType <span class="ot">&lt;-</span> dfsTandem[[refineId]] <span class="sc">%&gt;%</span> <span class="fu">pull</span>(refineTD) <span class="sc">%&gt;%</span> table</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>pi0 <span class="ot">&lt;-</span> <span class="fu">sum</span>(dfsTandem[[refineId]]<span class="sc">$</span>is_decoy)<span class="sc">/</span> <span class="fu">sum</span>(<span class="sc">!</span>dfsTandem[[refineId]]<span class="sc">$</span>is_decoy)</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>piSame <span class="ot">&lt;-</span> psmType[<span class="st">&quot;same decoy&quot;</span>]<span class="sc">/</span><span class="fu">sum</span>(<span class="sc">!</span>dfsTandem[[refineId]]<span class="sc">$</span>is_decoy)</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>piSameNew <span class="ot">&lt;-</span> (psmType[<span class="st">&quot;same decoy&quot;</span>]<span class="sc">+</span>psmType[<span class="st">&quot;new decoy&quot;</span>])<span class="sc">/</span><span class="fu">sum</span>(<span class="sc">!</span>dfsTandem[[refineId]]<span class="sc">$</span>is_decoy)</span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>piSameNewSwitch <span class="ot">&lt;-</span> (psmType[<span class="st">&quot;same decoy&quot;</span>]<span class="sc">+</span>psmType[<span class="st">&quot;new decoy&quot;</span>] <span class="sc">+</span> psmType[<span class="st">&quot;switched decoy&quot;</span>])<span class="sc">/</span><span class="fu">sum</span>(<span class="sc">!</span>dfsTandem[[refineId]]<span class="sc">$</span>is_decoy)</span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>piSameNewSwitchNewTarget <span class="ot">&lt;-</span> (psmType[<span class="st">&quot;same decoy&quot;</span>]<span class="sc">+</span>psmType[<span class="st">&quot;new decoy&quot;</span>] <span class="sc">+</span> psmType[<span class="st">&quot;switched decoy&quot;</span>] <span class="sc">+</span> psmType[<span class="st">&quot;new target&quot;</span>])<span class="sc">/</span><span class="fu">sum</span>(<span class="sc">!</span>dfsTandem[[refineId]]<span class="sc">$</span>is_decoy)</span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">&quot;./figs/figTandemRefineSwissPSMtypeHistPP.png&quot;</span>, </span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>       <span class="at">plot=</span> gridExtra<span class="sc">::</span><span class="fu">grid.arrange</span>(</span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>         figsTandemSwissRefinementHistPsmType <span class="sc">+</span></span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a>           <span class="fu">ggtitle</span>(<span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a>           <span class="fu">ylab</span>(<span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a>           <span class="fu">xlim</span>(<span class="sc">-</span><span class="fl">6.2</span>,<span class="dv">35</span>) <span class="sc">+</span></span>
+<span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a>           <span class="fu">theme</span>(</span>
+<span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a>             <span class="at">legend.position =</span> <span class="fu">c</span>(<span class="fl">0.73</span>,<span class="fl">0.68</span>),</span>
+<span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a>             <span class="at">legend.title =</span> <span class="fu">element_blank</span>()) <span class="sc">+</span></span>
+<span id="cb18-27"><a href="#cb18-27" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">annotate</span>(<span class="st">&quot;rect&quot;</span>, <span class="at">xmin =</span> thresh, <span class="at">xmax =</span> <span class="dv">35</span>, <span class="at">ymin =</span> <span class="sc">-</span><span class="dv">10</span>, <span class="at">ymax =</span> <span class="dv">1500</span>, <span class="at">alpha =</span> .<span class="dv">2</span>) <span class="sc">+</span> </span>
+<span id="cb18-28"><a href="#cb18-28" aria-hidden="true" tabindex="-1"></a>      <span class="fu">annotate</span>(<span class="at">geom=</span><span class="st">&quot;text&quot;</span>, <span class="at">x=</span>thresh<span class="sc">+</span><span class="dv">1</span>, <span class="at">y=</span><span class="dv">1400</span>, <span class="at">label=</span><span class="st">&quot;x &gt; t[&#39;1% FDR&#39;]&quot;</span>,</span>
+<span id="cb18-29"><a href="#cb18-29" aria-hidden="true" tabindex="-1"></a>              <span class="at">color=</span><span class="st">&quot;black&quot;</span>,<span class="at">hjust=</span><span class="dv">0</span> ,<span class="at">parse=</span><span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb18-30"><a href="#cb18-30" aria-hidden="true" tabindex="-1"></a>        <span class="fu">annotate</span>(<span class="at">geom=</span><span class="st">&quot;rect&quot;</span>,<span class="at">xmin=</span>thresh,<span class="at">xmax=</span>thresh,<span class="at">ymin=</span><span class="dv">0</span>,<span class="at">ymax=</span><span class="dv">1500</span>,<span class="at">color=</span><span class="st">&quot;red&quot;</span>), </span>
+<span id="cb18-31"><a href="#cb18-31" aria-hidden="true" tabindex="-1"></a>         ppPlotsTandem[[refineId]] <span class="sc">+</span> </span>
+<span id="cb18-32"><a href="#cb18-32" aria-hidden="true" tabindex="-1"></a>           <span class="fu">geom_polygon</span>(<span class="fu">aes</span>(<span class="at">x=</span>x,<span class="at">y=</span>y),<span class="at">data=</span><span class="fu">data.frame</span>(<span class="at">x=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>),<span class="at">y=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,piSame)),<span class="at">fill=</span><span class="st">&quot;#FF9900&quot;</span>,<span class="at">inherit.aes =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb18-33"><a href="#cb18-33" aria-hidden="true" tabindex="-1"></a>           <span class="fu">geom_polygon</span>(<span class="fu">aes</span>(<span class="at">x=</span>x,<span class="at">y=</span>y),<span class="at">data=</span><span class="fu">data.frame</span>(<span class="at">x=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>),<span class="at">y=</span><span class="fu">c</span>(<span class="dv">0</span>,piSame,piSameNew)),<span class="at">fill=</span><span class="st">&quot;#c03600&quot;</span>,<span class="at">inherit.aes =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb18-34"><a href="#cb18-34" aria-hidden="true" tabindex="-1"></a>           <span class="fu">geom_polygon</span>(<span class="fu">aes</span>(<span class="at">x=</span>x,<span class="at">y=</span>y),<span class="at">data=</span><span class="fu">data.frame</span>(<span class="at">x=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>),<span class="at">y=</span><span class="fu">c</span>(<span class="dv">0</span>,piSameNew,piSameNewSwitch)),<span class="at">fill=</span><span class="st">&quot;#f54281&quot;</span>,<span class="at">inherit.aes =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb18-35"><a href="#cb18-35" aria-hidden="true" tabindex="-1"></a>           <span class="fu">geom_polygon</span>(<span class="fu">aes</span>(<span class="at">x=</span>x,<span class="at">y=</span>y),<span class="at">data=</span><span class="fu">data.frame</span>(<span class="at">x=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>),<span class="at">y=</span><span class="fu">c</span>(<span class="dv">0</span>,piSameNewSwitch,piSameNewSwitchNewTarget)),<span class="at">fill=</span><span class="st">&quot;#5df542&quot;</span>,<span class="at">inherit.aes =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb18-36"><a href="#cb18-36" aria-hidden="true" tabindex="-1"></a>           <span class="fu">geom_abline</span>(</span>
+<span id="cb18-37"><a href="#cb18-37" aria-hidden="true" tabindex="-1"></a>             <span class="at">slope =</span> pi0) <span class="sc">+</span> </span>
+<span id="cb18-38"><a href="#cb18-38" aria-hidden="true" tabindex="-1"></a>           <span class="fu">geom_abline</span>(</span>
+<span id="cb18-39"><a href="#cb18-39" aria-hidden="true" tabindex="-1"></a>             <span class="at">slope =</span> piSameNewSwitchNewTarget) <span class="sc">+</span> </span>
+<span id="cb18-40"><a href="#cb18-40" aria-hidden="true" tabindex="-1"></a>           <span class="fu">ylim</span>(<span class="dv">0</span>,<span class="fl">0.6</span>) <span class="sc">+</span> </span>
+<span id="cb18-41"><a href="#cb18-41" aria-hidden="true" tabindex="-1"></a>           <span class="fu">ggtitle</span>(<span class="cn">NULL</span>), </span>
+<span id="cb18-42"><a href="#cb18-42" aria-hidden="true" tabindex="-1"></a>         <span class="at">ncol=</span><span class="dv">2</span>), </span>
+<span id="cb18-43"><a href="#cb18-43" aria-hidden="true" tabindex="-1"></a>       <span class="at">device =</span> <span class="st">&quot;png&quot;</span>, </span>
+<span id="cb18-44"><a href="#cb18-44" aria-hidden="true" tabindex="-1"></a>       <span class="at">width =</span> <span class="fl">7.8</span>, </span>
+<span id="cb18-45"><a href="#cb18-45" aria-hidden="true" tabindex="-1"></a>  <span class="at">height =</span> <span class="fl">3.9</span>)</span></code></pre></div>
+<pre><code>## Warning: Removed 12 rows containing missing values (`geom_bar()`).</code></pre>
+<p><img src="paper_figures_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+</div>
+</div>
+</div>
+<div id="human-sample" class="section level1" number="4">
+<h1><span class="header-section-number">4</span> Human sample</h1>
+<p>Make diagnostic plots for rank 1 and rank 2.</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># P-P plot for human sample </span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>path2File <span class="ot">&lt;-</span> <span class="st">&quot;./data/PXD028735-LFQ_Orbitrap_DDA_Human_01_uniprot-hsapiens-canonical-isoforms-crap_msgfplus-phospho.msgf.mzid.tsv&quot;</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(path2File)</span></code></pre></div>
+<pre><code>## Rows: 1058347 Columns: 21
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: &quot;\t&quot;
+## chr (8): peptidoform, spectrum_id, run, protein_list, source, provenance:mzi...
+## dbl (9): score, precursor_mz, retention_time, rank, meta:calculatedMassToCha...
+## lgl (4): collection, is_decoy, qvalue, pep
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> df[<span class="fu">rowSums</span>(<span class="fu">sapply</span>(crapEntries, grepl,<span class="at">fixed=</span><span class="cn">TRUE</span>,<span class="at">x =</span> df<span class="sc">$</span>protein_list)) <span class="sc">==</span> <span class="dv">0</span>,]</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">filename =</span> <span class="st">&quot;./figs/figHumanMsgfPlus.png&quot;</span>,</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">plot =</span> gridExtra<span class="sc">::</span><span class="fu">grid.arrange</span>(</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">evalTargetDecoysHist</span>(</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>      df <span class="sc">%&gt;%</span> <span class="fu">filter</span>(rank<span class="sc">==</span><span class="dv">1</span>),</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;is_decoy&quot;</span>,</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;score&quot;</span>,</span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span>) <span class="sc">+</span> </span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>      <span class="fu">ggtitle</span>(<span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_histogram</span>(</span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>        <span class="at">bins=</span><span class="dv">50</span>, </span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>        <span class="at">alpha=</span>.<span class="dv">9</span>, </span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>        <span class="at">position=</span><span class="st">&quot;identity&quot;</span>) <span class="sc">+</span></span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>      <span class="fu">theme</span>(</span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>             <span class="at">legend.position =</span> <span class="fu">c</span>(<span class="fl">0.75</span>,<span class="fl">0.75</span>),</span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a>             ),</span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">evalTargetDecoysPPPlot</span>(</span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>      df <span class="sc">%&gt;%</span> <span class="fu">filter</span>(rank<span class="sc">==</span><span class="dv">1</span>),</span>
+<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;is_decoy&quot;</span>, </span>
+<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;score&quot;</span>,</span>
+<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span>) <span class="sc">+</span> </span>
+<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a>      <span class="fu">ggtitle</span>(<span class="cn">NULL</span>),</span>
+<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">ncol=</span><span class="dv">2</span></span>
+<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb22-28"><a href="#cb22-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">device =</span> <span class="st">&quot;png&quot;</span>, </span>
+<span id="cb22-29"><a href="#cb22-29" aria-hidden="true" tabindex="-1"></a>  <span class="at">width =</span> <span class="fl">7.8</span>, </span>
+<span id="cb22-30"><a href="#cb22-30" aria-hidden="true" tabindex="-1"></a>  <span class="at">height =</span> <span class="fl">3.9</span>)</span></code></pre></div>
+<p><img src="paper_figures_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">filename =</span> <span class="st">&quot;./figs/figHumanMsgfPlusR2.png&quot;</span>,</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">plot =</span> gridExtra<span class="sc">::</span><span class="fu">grid.arrange</span>(</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>     <span class="fu">evalTargetDecoysHist</span>(</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>      df <span class="sc">%&gt;%</span> <span class="fu">filter</span>(rank<span class="sc">==</span><span class="dv">2</span>),</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;is_decoy&quot;</span>,</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;score&quot;</span>,</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span>) <span class="sc">+</span> </span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>      <span class="fu">ggtitle</span>(<span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_histogram</span>(</span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">bins=</span><span class="dv">50</span>, </span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">alpha=</span>.<span class="dv">9</span>,</span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>        <span class="at">position =</span> <span class="st">&quot;identity&quot;</span>) <span class="sc">+</span></span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>      <span class="fu">theme</span>(</span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>             <span class="at">legend.position =</span> <span class="fu">c</span>(<span class="fl">0.75</span>,<span class="fl">0.75</span>),</span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a>             ),</span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">evalTargetDecoysPPPlot</span>(</span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a>      df <span class="sc">%&gt;%</span> <span class="fu">filter</span>(rank<span class="sc">==</span><span class="dv">2</span>),</span>
+<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;is_decoy&quot;</span>, </span>
+<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;score&quot;</span>,</span>
+<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span>) <span class="sc">+</span> </span>
+<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a>      <span class="fu">ggtitle</span>(<span class="cn">NULL</span>),</span>
+<span id="cb23-23"><a href="#cb23-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">ncol=</span><span class="dv">2</span></span>
+<span id="cb23-24"><a href="#cb23-24" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb23-25"><a href="#cb23-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">device =</span> <span class="st">&quot;png&quot;</span>, </span>
+<span id="cb23-26"><a href="#cb23-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">width =</span> <span class="fl">7.8</span>, </span>
+<span id="cb23-27"><a href="#cb23-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">height =</span> <span class="fl">3.9</span>)</span></code></pre></div>
+<p><img src="paper_figures_files/figure-html/unnamed-chunk-11-2.png" width="672" /></p>
+</div>
+<div id="immunopeptidomics" class="section level1" number="5">
+<h1><span class="header-section-number">5</span> Immunopeptidomics</h1>
+<p>Make diagnostic plots</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot immunopeptidomics plot</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>path2File <span class="ot">&lt;-</span> <span class="st">&quot;./data/immunopeptidomics_msms_IAA.txt&quot;</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(path2File)</span></code></pre></div>
+<pre><code>## Rows: 7622632 Columns: 22
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: &quot;\t&quot;
+## chr  (8): peptide, run, protein_list, source, provenance:msms_filename, meta...
+## dbl (10): spectrum_id, score, precursor_mz, retention_time, meta:Delta Score...
+## lgl  (4): collection, is_decoy, qvalue, pep
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">filename =</span> <span class="st">&quot;./figs/figPeptidomics.png&quot;</span>,</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">plot =</span> gridExtra<span class="sc">::</span><span class="fu">grid.arrange</span>(</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">evalTargetDecoysHist</span>(df,<span class="st">&quot;is_decoy&quot;</span>, <span class="st">&quot;score&quot;</span>,<span class="cn">FALSE</span>) <span class="sc">+</span> </span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>      <span class="fu">geom_histogram</span>(</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">bins=</span><span class="dv">50</span>, </span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">alpha=</span>.<span class="dv">9</span>, </span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">position=</span><span class="st">&quot;identity&quot;</span>) <span class="sc">+</span></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>      <span class="fu">ggtitle</span>(<span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>      <span class="fu">theme</span>(</span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>             <span class="at">legend.position =</span> <span class="fu">c</span>(<span class="fl">0.3</span>,<span class="fl">0.7</span>),</span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>             ),</span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">evalTargetDecoysPPPlot</span>(df,<span class="st">&quot;is_decoy&quot;</span>, <span class="st">&quot;score&quot;</span>,<span class="cn">FALSE</span>) <span class="sc">+</span> </span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>      <span class="fu">xlab</span>(<span class="st">&quot;Fd&quot;</span>) <span class="sc">+</span> </span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>      <span class="fu">ylab</span>(<span class="st">&quot;Ft&quot;</span>) <span class="sc">+</span></span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>      <span class="fu">ggtitle</span>(<span class="cn">NULL</span>),</span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">ncol=</span><span class="dv">2</span></span>
+<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">device =</span> <span class="st">&quot;png&quot;</span>, </span>
+<span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">width =</span> <span class="fl">7.8</span>, </span>
+<span id="cb26-21"><a href="#cb26-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">height =</span> <span class="fl">3.9</span>)</span></code></pre></div>
+<p><img src="paper_figures_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+</div>
+<div id="joint-p-plot" class="section level1" number="6">
+<h1><span class="header-section-number">6</span> Joint P-Plot</h1>
+<p>Put searches of MSGF+ and XTandem with refinement on one plot.</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Joint PP-plot</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>msgfId <span class="ot">&lt;-</span> <span class="fu">which</span>(</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">grepl</span>(<span class="at">pattern=</span><span class="st">&quot;swissprot&quot;</span>,msgfFiles,<span class="at">fixed =</span> <span class="cn">TRUE</span>) <span class="sc">&amp;</span> <span class="fu">grepl</span>(<span class="at">pattern=</span><span class="st">&quot;pfuriosus&quot;</span>,msgfFiles,<span class="at">fixed =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  ) </span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>h <span class="ot">&lt;-</span> TargetDecoy<span class="sc">:::</span><span class="fu">processObjects</span>(</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(dfsTandem[[refineId]],dfsmsgf[[msgfId]] <span class="sc">%&gt;%</span> <span class="fu">filter</span>(rank<span class="sc">==</span><span class="dv">1</span>)),</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">decoy=</span><span class="fu">c</span>(<span class="st">&quot;is_decoy&quot;</span>,<span class="st">&quot;is_decoy&quot;</span>),</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">score=</span><span class="fu">c</span>(<span class="st">&quot;score&quot;</span>,<span class="st">&quot;score&quot;</span>),</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">log10=</span><span class="fu">c</span>(<span class="cn">FALSE</span>,<span class="cn">TRUE</span>)</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>  TargetDecoy<span class="sc">:::</span><span class="fu">ppScoresData</span>()</span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(</span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">file =</span> <span class="st">&quot;./figs/figTandemMsGfSwissCombindedPP.png&quot;</span>,</span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">plot =</span> h<span class="sc">$</span>df <span class="sc">%&gt;%</span></span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(</span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>      <span class="fu">aes</span>(Fdp,z,<span class="at">color=</span>id<span class="sc">%&gt;%</span>as.factor)) <span class="sc">+</span> </span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_abline</span>(<span class="at">slope=</span><span class="dv">0</span>) <span class="sc">+</span> </span>
+<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>() <span class="sc">+</span> </span>
+<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">legend.title =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a>          <span class="at">legend.position =</span> <span class="fu">c</span>(<span class="fl">0.2</span>,.<span class="dv">85</span>)) <span class="sc">+</span></span>
+<span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ylab</span>(<span class="st">&quot;Ft-pi0&quot;</span>) <span class="sc">+</span></span>
+<span id="cb27-24"><a href="#cb27-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_color_discrete</span>(<span class="at">labels=</span><span class="fu">c</span>(<span class="st">&quot;X!Tandem&quot;</span>,<span class="st">&quot;MSGF+&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb27-25"><a href="#cb27-25" aria-hidden="true" tabindex="-1"></a>    <span class="fu">xlab</span>(<span class="st">&quot;Fd&quot;</span>),</span>
+<span id="cb27-26"><a href="#cb27-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">device =</span> <span class="st">&quot;png&quot;</span>, </span>
+<span id="cb27-27"><a href="#cb27-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">width =</span> <span class="fl">3.9</span>, </span>
+<span id="cb27-28"><a href="#cb27-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">height =</span> <span class="fl">3.9</span>)</span></code></pre></div>
+</div>
+<div id="clean-up-files" class="section level1" number="7">
+<h1><span class="header-section-number">7</span> Clean up files</h1>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>f <span class="ot">&lt;-</span> <span class="fu">list.files</span>(<span class="st">&quot;./data&quot;</span>, <span class="at">recursive =</span> <span class="cn">TRUE</span>, <span class="at">full.names =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">file.remove</span>(f)</span></code></pre></div>
+<pre><code>##  [1] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE</code></pre>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">file.remove</span>(<span class="st">&quot;data&quot;</span>)</span></code></pre></div>
+<pre><code>## [1] TRUE</code></pre>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">file.remove</span>(destFile)</span></code></pre></div>
+<pre><code>## [1] TRUE</code></pre>
+</div>
+<div id="session-info" class="section level1" number="8">
+<h1><span class="header-section-number">8</span> Session Info</h1>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div>
+<pre><code>## R version 4.2.2 (2022-10-31)
+## Platform: x86_64-pc-linux-gnu (64-bit)
+## Running under: Ubuntu 20.04.5 LTS
+## 
+## Matrix products: default
+## BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.9.0
+## LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.9.0
+## 
+## locale:
+##  [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       
+##  [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   
+##  [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          
+## [10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   
+## 
+## attached base packages:
+## [1] stats     graphics  grDevices datasets  utils     methods   base     
+## 
+## other attached packages:
+##  [1] RCurl_1.98-1.9    TargetDecoy_1.4.0 forcats_0.5.2     stringr_1.4.1    
+##  [5] dplyr_1.0.10      purrr_0.3.5       readr_2.1.3       tidyr_1.2.1      
+##  [9] tibble_3.1.8      ggplot2_3.4.0     tidyverse_1.3.2  
+## 
+## loaded via a namespace (and not attached):
+##  [1] bitops_1.0-7        ProtGenerics_1.30.0 fs_1.5.2           
+##  [4] bit64_4.0.5         lubridate_1.9.0     doParallel_1.0.17  
+##  [7] httr_1.4.4          tools_4.2.2         backports_1.4.1    
+## [10] bslib_0.4.1         utf8_1.2.2          R6_2.5.1           
+## [13] DBI_1.1.3           BiocGenerics_0.44.0 colorspace_2.0-3   
+## [16] withr_2.5.0         gridExtra_2.3       tidyselect_1.2.0   
+## [19] bit_4.0.4           compiler_4.2.2      cli_3.4.1          
+## [22] rvest_1.0.3         Biobase_2.58.0      xml2_1.3.3         
+## [25] labeling_0.4.2      sass_0.4.2          scales_1.2.1       
+## [28] digest_0.6.30       rmarkdown_2.18      pkgconfig_2.0.3    
+## [31] htmltools_0.5.3     highr_0.9           dbplyr_2.2.1       
+## [34] fastmap_1.1.0       rlang_1.0.6         readxl_1.4.1       
+## [37] shiny_1.7.3         farver_2.1.1        jquerylib_0.1.4    
+## [40] generics_0.1.3      jsonlite_1.8.3      vroom_1.6.0        
+## [43] mzID_1.36.0         googlesheets4_1.0.1 magrittr_2.0.3     
+## [46] Rcpp_1.0.9          munsell_0.5.0       fansi_1.0.3        
+## [49] lifecycle_1.0.3     stringi_1.7.8       yaml_2.3.6         
+## [52] plyr_1.8.7          grid_4.2.2          parallel_4.2.2     
+## [55] promises_1.2.0.1    crayon_1.5.2        miniUI_0.1.1.1     
+## [58] haven_2.5.1         hms_1.1.2           mzR_2.32.0         
+## [61] knitr_1.40          pillar_1.8.1        codetools_0.2-18   
+## [64] reprex_2.0.2        XML_3.99-0.12       glue_1.6.2         
+## [67] evaluate_0.18       renv_0.16.0         modelr_0.1.10      
+## [70] vctrs_0.5.0         tzdb_0.3.0          httpuv_1.6.6       
+## [73] foreach_1.5.2       cellranger_1.1.0    gtable_0.3.1       
+## [76] assertthat_0.2.1    cachem_1.0.6        xfun_0.34          
+## [79] mime_0.12           xtable_1.8-4        broom_1.0.1        
+## [82] later_1.3.0         ncdf4_1.19          googledrive_2.0.0  
+## [85] gargle_1.2.1        iterators_1.0.14    timechange_0.1.1   
+## [88] ellipsis_0.3.2</code></pre>
+</div>
+
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiUXVhbGl0eSBjb250cm9sIGZvciB0aGUgdGFyZ2V0IGRlY295IGFwcHJvYWNoIGZvciBwZXB0aWRlIGlkZW50aWZpY2F0aW9uIgphdXRob3I6IAogIC0gbmFtZTogTGlldmVuIENsZW1lbnQKICAgIGFmZmlsaWF0aW9uOgogICAgLSBHaGVudCBVbml2ZXJzaXR5Cm91dHB1dDogCiAgICBodG1sX2RvY3VtZW50OgogICAgICBjb2RlX2ZvbGRpbmc6IGhpZGUKICAgICAgY29kZV9kb3dubG9hZDogdHJ1ZQogICAgICB0aGVtZTogZmxhdGx5CiAgICAgIHRvYzogdHJ1ZQogICAgICB0b2NfZmxvYXQ6IHRydWUKICAgICAgaGlnaGxpZ2h0OiB0YW5nbwogICAgICBudW1iZXJfc2VjdGlvbnM6IHRydWUKbGlua2NvbG9yOiBibHVlCnVybGNvbG9yOiBibHVlCmNpdGVjb2xvcjogYmx1ZQotLS0KCgojIGxvYWQgbGlicmFyaWVzCgpgYGB7cn0Kc3VwcHJlc3NQYWNrYWdlU3RhcnR1cE1lc3NhZ2VzKHsKbGlicmFyeSh0aWR5dmVyc2UpCmxpYnJhcnkoVGFyZ2V0RGVjb3kpCmxpYnJhcnkoUkN1cmwpCn0pCmBgYAoKIyBEb3dubG9hZCBkYXRhIGZyb20gWmVub2RvCiAKYGBge3J9CiMgRG93bmxvYWQgZGF0YSBmcm9tIHplbm9kbwpvcHRpb25zKHRpbWVvdXQ9MzAwKQp1cmwgPC0gImh0dHBzOi8vemVub2RvLm9yZy9yZWNvcmQvNzMwODAyMi9maWxlcy9zZWFyY2gtcmVzdWx0cy56aXA/ZG93bmxvYWQ9MSIKZGVzdEZpbGUgPC0gInNlYXJjaFJlc3VsdHMuemlwIgppZiAoIWZpbGUuZXhpc3RzKGRlc3RGaWxlKSkgZG93bmxvYWQuZmlsZSh1cmwsIGRlc3RGaWxlKQp1bnppcChkZXN0RmlsZSwgZXhkaXIgPSAiLi9kYXRhIiwgb3ZlcndyaXRlID0gVFJVRSkKYGBgCgojIFB5cm9jb2NjdXMgCgojIyBJbXBvcnQgUHlyb2NvY2N1cyBEYXRhIGluIFIKCmBgYHtyfQphbGxUc3ZGaWxlcyA8LSBsaXN0LmZpbGVzKHBhdGg9ImRhdGEiLHBhdHRlcm49Ii50c3YkIixmdWxsLm5hbWVzID0gVFJVRSkKbXNnZkZpbGVzIDwtIGFsbFRzdkZpbGVzW2dyZXBsKCJtc2dmIixhbGxUc3ZGaWxlcykmZ3JlcGwoIlBYRDAwMTA3NyIsYWxsVHN2RmlsZXMpXQpkZnNtc2dmIDwtIGxhcHBseShtc2dmRmlsZXMsIHJlYWRfdHN2KQpjcmFwRW50cmllcyA8LSBzY2FuKCJkYi1ncG0tY3JhcC1lbnRyaWVzLnR4dCIsIHdoYXQgPSAiY2hhcmFjdGVyIikKZGZzbXNnZiA8LSBsYXBwbHkoZGZzbXNnZiwgZnVuY3Rpb24oZGIpIAogIGRiW3Jvd1N1bXMoc2FwcGx5KGNyYXBFbnRyaWVzLCBncmVwbCxmaXhlZD1UUlVFLHggPSBkYiRwcm90ZWluX2xpc3QpKSA9PSAwLF0pCgp0YW5kZW1GaWxlcyA8LSBhbGxUc3ZGaWxlc1tncmVwbCgieHRhbmRlbSIsYWxsVHN2RmlsZXMpJmdyZXBsKCJQWEQwMDEwNzciLGFsbFRzdkZpbGVzKV0KZGZzVGFuZGVtIDwtIGxhcHBseSh0YW5kZW1GaWxlcywgcmVhZF90c3YpCmRmc1RhbmRlbSA8LSBsYXBwbHkoZGZzVGFuZGVtLCBmdW5jdGlvbihkYikgCiAgZGJbcm93U3VtcyhzYXBwbHkoY3JhcEVudHJpZXMsIGdyZXBsLGZpeGVkPVRSVUUseCA9IGRiJHByb3RlaW5fbGlzdCkpID09IDAsXSkKYGBgCgojIyBGRFIgZnVuY3Rpb24gCgpDYWxjdWxhdGUgRkRSIG9uIHRpYmJsZSB3aXRoIHNlYXJjaCByZXN1bHRzLiBJdCBpcyBhc3N1bWVkIHRoYXQgaGlnaGVyIHNjb3JlcyBhcmUgYmV0dGVyLiAKCmBgYHtyfQojIEZEUiBmdW5jdGlvbgpmZHJEYiA8LSBmdW5jdGlvbihkYikKewogIGRiIDwtIGRiICU+JSAKICAgIGFycmFuZ2UoZGVzYyhzY29yZSkpICU+JSAKICAgIG11dGF0ZShGUCA9IGN1bXN1bShpc19kZWNveSksCiAgICAgICAgICAgRkRSID0gY3Vtc3VtKGlzX2RlY295KS9jdW1zdW0oIWlzX2RlY295KSkKICBGRFIgPC0gZGIkRkRSCiAgRkRSbWluIDwtIEZEUltsZW5ndGgoRkRSKV0KICBmb3IgKGogaW4gKGxlbmd0aChGRFIpLTEpOjEpCiAgewogICAgaWYgKEZEUltqXSA8IEZEUm1pbikKICAgICAgRkRSbWluIDwtIEZEUltqXSBlbHNlCiAgICAgIEZEUltqXSA8LSBGRFJtaW4gICAKICB9CiAgZGIkRkRSIDwtIEZEUgogIGRiIDwtIGRiICU+JSAKICAgIGFycmFuZ2Uoc3BlY3RydW1faWQpIAogIHJldHVybihkYikKfQpgYGAKCiMjIEdlbmVyYXRlIHBsb3RzIGZvciBNU0dGKyAgCgpIaXN0b2dyYW1zIGFuZCBQLVAgcGxvdHMgZm9yIHJhbmsxLCByYW5rIDIgYW5kIHNlYXJjaCBhZ2FpbnN0IGh1bWFuIERCLgoKYGBge3J9CiMgR2VuZXJhdGUgTVNHRisgcGxvdHMgcHlyb2NvY2N1cwpoaXN0c01zZ2YgPC0gbGFwcGx5KGRmc21zZ2YsZnVuY3Rpb24oZGIsIHNjb3JlLCBkZWNveSwgbG9nMTApIGV2YWxUYXJnZXREZWNveXNIaXN0KGRiICU+JSBmaWx0ZXIocmFuaz09MSksIGRlY295LCBzY29yZSwgbG9nMTApICsgeGxhYigiU2NvcmUiKSArIGdndGl0bGUoTlVMTCkgKyAgIGdlb21faGlzdG9ncmFtKGJpbnM9NTAsIHBvc2l0aW9uPSJpZGVudGl0eSIsYWxwaGE9LjkpLCBzY29yZT0ic2NvcmUiLCBkZWNveT0iaXNfZGVjb3kiLCBsb2cxMD1UUlVFKQpoaXN0c01zZ2ZSMiA8LSBsYXBwbHkoZGZzbXNnZixmdW5jdGlvbihkYiwgc2NvcmUsIGRlY295LCBsb2cxMCkgZXZhbFRhcmdldERlY295c0hpc3QoZGIgJT4lIGZpbHRlcihyYW5rPT0yKSwgZGVjb3ksIHNjb3JlLCBsb2cxMCkgKyB4bGFiKCJTY29yZSIpICsgZ2d0aXRsZShOVUxMKSArICBnZW9tX2hpc3RvZ3JhbShiaW5zPTUwLCBwb3NpdGlvbj0iaWRlbnRpdHkiLGFscGhhPS45KSAgIAosIHNjb3JlPSJzY29yZSIsIGRlY295PSJpc19kZWNveSIsIGxvZzEwPVRSVUUpCnBwUGxvdHNNc2dmIDwtIGxhcHBseShkZnNtc2dmLGZ1bmN0aW9uKGRiLCBzY29yZSwgZGVjb3ksIGxvZzEwKSBldmFsVGFyZ2V0RGVjb3lzUFBQbG90KGRiICU+JSBmaWx0ZXIocmFuaz09MSksIGRlY295LCBzY29yZSwgbG9nMTApICsgZ2d0aXRsZShOVUxMKSAreGxhYigiRmQiKSt5bGFiKCJGdCIpLCBzY29yZT0ic2NvcmUiLCBkZWNveT0iaXNfZGVjb3kiLCBsb2cxMD1UUlVFKQoKcHlyb0lkIDwtIHdoaWNoKAogIGdyZXBsKHBhdHRlcm49InN3aXNzcHJvdCIsbXNnZkZpbGVzLGZpeGVkID0gVFJVRSkgJiBncmVwbChwYXR0ZXJuPSJwZnVyaW9zdXMiLG1zZ2ZGaWxlcyxmaXhlZCA9IFRSVUUpCiAgKSAKCmRmSGxwIDwtIGRmc21zZ2ZbW3B5cm9JZF1dICAlPiUgCiAgZmlsdGVyKHJhbms9PTEpICU+JSAKICBtdXRhdGUoc2NvcmUgPSAtbG9nMTAoc2NvcmUpKSAlPiUKICBmZHJEYigpCnRocmVzaCA8LSBkZkhscCAlPiUgIAogIGZpbHRlcihGRFIgPCAwLjAxKSAlPiUgCiAgcHVsbChzY29yZSkgJT4lIAogIG1pbgpuU2lnIDwtIGRmSGxwICU+JSBmaWx0ZXIoRkRSIDwgMC4wMSkgJT4lIHB1bGwoaXNfZGVjb3kpICU+JSBgIWAgJT4lIHN1bQoKaHVtYW5JZCA8LSB3aGljaCgKICBncmVwbChwYXR0ZXJuPSJzd2lzc3Byb3QiLG1zZ2ZGaWxlcyxmaXhlZCA9IFRSVUUpICYgZ3JlcGwocGF0dGVybj0iaHNhcGllbnMiLG1zZ2ZGaWxlcyxmaXhlZCA9IFRSVUUpCiAgKSAKZ2dzYXZlKCAKICAiLi9maWdzL2ZpZ01zZ2ZTd2lzc0hpc3RzUHlyb1IxUjJfSHVtYW4ucG5nIiwgCiAgcGxvdCA9ICAKICAgIGdyaWRFeHRyYTo6Z3JpZC5hcnJhbmdlKAogICAgICBoaXN0c01zZ2ZbW3B5cm9JZF1dICsKICAgICAgICBnZW9tX2hpc3RvZ3JhbSgKICAgICAgICAgIGJpbnM9NTAsIAogICAgICAgICAgcG9zaXRpb249ImlkZW50aXR5IiwKICAgICAgICAgIGFscGhhPS45KSArCiAgICAgICAgIGdndGl0bGUocGFzdGUoblNpZywidGFyZ2V0IFBTTXMgYXQgMSUgRkRSIikpICsKICAgICAgICBhbm5vdGF0ZSgicmVjdCIsIHhtaW4gPSB0aHJlc2gsIHhtYXggPSAzNSwgeW1pbiA9IC0xMCwgeW1heCA9IDE2MDAsIGFscGhhID0gLjIpICsgCiAgICAgIGFubm90YXRlKGdlb209InRleHQiLCB4PXRocmVzaCsxLCB5PTE1MDAsIGxhYmVsPSJ4ID4gdFsnMSUgRkRSJ10iLAogICAgICAgICAgICAgIGNvbG9yPSJibGFjayIsaGp1c3Q9MCAscGFyc2U9VFJVRSkgKwogICAgICAgIGFubm90YXRlKGdlb209InJlY3QiLHhtaW49dGhyZXNoLHhtYXg9dGhyZXNoLHltaW49MCx5bWF4PTE2MDAsY29sb3I9InJlZCIpKwogICAgICAgICB0aGVtZShsZWdlbmQucG9zaXRpb24gPSBjKDAuNzUsMC43NSkpLAogICAgaGlzdHNNc2dmUjJbW3B5cm9JZF1dICsgCiAgICAgICAgIGdlb21faGlzdG9ncmFtKAogICAgICAgICAgIGJpbnM9NTAsIAogICAgICAgICAgIHBvc2l0aW9uPSJpZGVudGl0eSIsCiAgICAgICAgICAgYWxwaGE9LjkpICsKICAgICAgICAgZ2d0aXRsZSgiUmFuayAyIFBTTXMiKSArCiAgICAgICAgIHRoZW1lKGxlZ2VuZC5wb3NpdGlvbiA9IGMoMC43NSwwLjc1KSksCiAgICBoaXN0c01zZ2ZbW2h1bWFuSWRdXSArIAogICAgICAgICBnZW9tX2hpc3RvZ3JhbSgKICAgICAgICAgICBiaW5zPTUwLCAKICAgICAgICAgICBwb3NpdGlvbj0iaWRlbnRpdHkiLAogICAgICAgICAgIGFscGhhPS45KSArCiAgICAgICAgIGdndGl0bGUoIlNwZWN0cmEgbWF0Y2hlZCB0byBILiBzYXBpZW5zIikgKwogICAgICAgICB0aGVtZShsZWdlbmQucG9zaXRpb24gPSBjKDAuNzUsMC43NSkpLAogICAgbmNvbD0zKSwKICBkZXZpY2UgPSAicG5nIiwgCiAgd2lkdGggPSAxMS43LAogIGhlaWdodCA9IDMuOSkKCmdnc2F2ZSggCiAgIi4vZmlncy9maWdNc2dmU3dpc3NQUHBsb3RzUHlyb19IdW1hbi5wbmciLCAKICBwbG90ID0gIAogICAgZ3JpZEV4dHJhOjpncmlkLmFycmFuZ2UoCiAgICAgIHBwUGxvdHNNc2dmW1todW1hbklkXV0gKyAKICAgICAgICAgZ2d0aXRsZShOVUxMKSwKICAgICAgIHBwUGxvdHNNc2dmW1tweXJvSWRdXSArIAogICAgICAgICBnZ3RpdGxlKE5VTEwpLAogICAgICAgbmNvbD0yKSwKICBkZXZpY2UgPSAicG5nIiwgCiAgd2lkdGggPSA3LjgsIAogIGhlaWdodCA9IDMuOSkKCmBgYAoKIyMgWC10YW5kZW0gc2VhcmNoZXMKCgojIyMgUHJlcHJvY2VzcyB0YW5kZW0gZGF0YQoKQ29udmVydCBzcGVjdHJ1bSBpZCBpbnRvIGRvdWJsZSBmb3Igc29ydGluZyArIGFkZCBGRFIKCmBgYHtyfQojIFByZXByb2Nlc3MgVGFuZGVtIHB5cm9jb2NjdXMgcmVzdWx0cwpmb3IgKGkgaW4gMTpsZW5ndGgoZGZzVGFuZGVtKSkKewogIAogIGRmc1RhbmRlbVtbaV1dIDwtIGRmc1RhbmRlbVtbaV1dICU+JQogICAgbXV0YXRlKHNwZWN0cnVtX2lkX29yaWcgPSBzcGVjdHJ1bV9pZCwKICAgICAgICAgICBzcGVjdHJ1bV9pZCA9IHNhcHBseSgKICAgICAgICAgICAgIHNwZWN0cnVtX2lkICU+JSBzdHJzcGxpdChzcGxpdD0iICIpLCAKICAgICAgICAgICAgIGZ1bmN0aW9uKHgpIHN1YnN0cih4WzNdLDYsMTAwMCkpICU+JSBhcy5kb3VibGUKICAgICkKfQpkZnNUYW5kZW0gPC0gbGFwcGx5KGRmc1RhbmRlbSwgZmRyRGIpCmBgYAoKIyMjIFBsb3RzIGZvciBzZWFyY2ggd2l0aCBhbmQgd2l0aG91dCByZWZpbmVtZW50LiAKCmBgYHtyfQojIHBsb3RzIHh0YW5kZW0gUmVzdWx0cwpoaXN0c1RhbmRlbSA8LSBsYXBwbHkoZGZzVGFuZGVtLGV2YWxUYXJnZXREZWNveXNIaXN0LCBzY29yZT0ic2NvcmUiLCBkZWNveT0iaXNfZGVjb3kiLCBsb2cxMD1GQUxTRSkKcHBQbG90c1RhbmRlbSA8LSBsYXBwbHkoZGZzVGFuZGVtLGV2YWxUYXJnZXREZWNveXNQUFBsb3QsIHNjb3JlPSJzY29yZSIsIGRlY295PSJpc19kZWNveSIsIGxvZzEwPUZBTFNFKQoKbm9SZWZpbmVJZCA8LSB3aGljaChncmVwbCgibm8tcmVmaW5lIix0YW5kZW1GaWxlcykpCnJlZmluZUlkIDwtIHdoaWNoKCFncmVwbCgibm8tcmVmaW5lIix0YW5kZW1GaWxlcykpCgpnZ3NhdmUoIAogICIuL2ZpZ3MvZmlnVGFuZGVtUmVmaW5lU3dpc3NIaXN0UFAucG5nIiwgCiAgcGxvdCA9ICBncmlkRXh0cmE6OmdyaWQuYXJyYW5nZSgKICAgICAgIGhpc3RzVGFuZGVtW1tyZWZpbmVJZF1dICsgCiAgICAgICAgIGdlb21faGlzdG9ncmFtKGJpbnM9NTAsIHBvc2l0aW9uPSJpZGVudGl0eSIsYWxwaGE9LjkpICsKICAgICAgICAgeWxpbSgwLDE1MDApICsKICAgICAgICAgeGxpbSgtNi4yLDM1KSArCiAgICAgICAgIGdndGl0bGUoTlVMTCkgKwogICAgICAgICB0aGVtZShsZWdlbmQucG9zaXRpb24gPSBjKDAuNzUsMC43NSkpLAogICAgICAgcHBQbG90c1RhbmRlbVtbcmVmaW5lSWRdXSArIAogICAgICAgICBnZ3RpdGxlKE5VTEwpICsKICAgICAgICAgeWxpbSgwLC42KSwgCiAgICAgICBuY29sPTIpLAogIGRldmljZSA9ICJwbmciLCAKICB3aWR0aCA9IDcuOCwgCiAgaGVpZ2h0ID0gMy45KQpnZ3NhdmUoCiAgIi4vZmlncy9maWdUYW5kZW1Ob1JlZmluZVN3aXNzSGlzdFBQLnBuZyIsIAogIHBsb3QgPSBncmlkRXh0cmE6OmdyaWQuYXJyYW5nZSgKICAgICAgIGhpc3RzVGFuZGVtW1tub1JlZmluZUlkXV0gKyAKICAgICAgICBnZW9tX2hpc3RvZ3JhbShiaW5zPTUwLCBwb3NpdGlvbj0iaWRlbnRpdHkiLGFscGhhPS45KSArCiAgICAgICAgIHlsaW0oMCwxNTAwKSArIAogICAgICAgICB4bGltKC02LjIsMzUpICsKICAgICAgICAgZ2d0aXRsZShOVUxMKSArIAogICAgICAgICB0aGVtZShsZWdlbmQucG9zaXRpb24gPSBjKDAuNzUsMC43NSkpLAogICAgICAgcHBQbG90c1RhbmRlbVtbbm9SZWZpbmVJZF1dICsgCiAgICAgICAgIGdndGl0bGUoTlVMTCkgKwogICAgICAgICB5bGltKDAsLjYpLCAKICAgICAgIG5jb2w9MiksCiAgZGV2aWNlID0gInBuZyIsIAogIHdpZHRoID0gNy44LCAKICBoZWlnaHQgPSAzLjkpCmBgYAoKIyMjIFBsb3QgdG8gc3RyYXRpZnkgcmVmaW5lbWVudCBzZWFyY2hlZCBwZXB0aWRlcwoKQ2FsY3VsYXRlIDElIEZEUiB0aHJlc2hvbGQgZm9yIHBsb3QgCgpgYGB7cn0KdGhyZXNoIDwtIGRmc1RhbmRlbVtbcmVmaW5lSWRdXSAlPiUgIAogIGZpbHRlcihGRFIgPCAwLjAxKSAlPiUgCiAgcHVsbChzY29yZSkgJT4lIAogIG1pbgpgYGAKCklkZW50aWZ5IHR5cGUgb2YgUFNNOiBzYW1lIG1hdGNoLCBzd2ljaGVkIG1hdGNoIG9yIG5ldyBzcGVjdHJ1bSB1cG9uIHJlZmluZW1lbnQuIAoKYGBge3J9CmRmc1RhbmRlbVtbcmVmaW5lSWRdXSRyZWZpbmUgPC0gInN3aXRjaGVkIgpkZnNUYW5kZW1bW3JlZmluZUlkXV0kaW5Ob1JlZmluZSA8LSBkZnNUYW5kZW1bW3JlZmluZUlkXV0kc3BlY3RydW1faWQgJWluJSBkZnNUYW5kZW1bW25vUmVmaW5lSWRdXSRzcGVjdHJ1bV9pZAoKZGZzVGFuZGVtW1tyZWZpbmVJZF1dJHJlZmluZVshZGZzVGFuZGVtW1tyZWZpbmVJZF1dJGluTm9SZWZpbmVdIDwtICJuZXciCgpkZlJlZmluZUNvbW1vbiA8LSBkZnNUYW5kZW1bW3JlZmluZUlkXV0gJT4lIGZpbHRlcihpbk5vUmVmaW5lKQoKZGZzVGFuZGVtW1tub1JlZmluZUlkXV0kaW5SZWZpbmUgPC0gZGZzVGFuZGVtW1tub1JlZmluZUlkXV0kc3BlY3RydW1faWQgJWluJSBkZnNUYW5kZW1bW3JlZmluZUlkXV0kc3BlY3RydW1faWQKZGZOb1JlZmluZUNvbW1vbiA8LSBkZnNUYW5kZW1bW25vUmVmaW5lSWRdXSAlPiUgZmlsdGVyKGluUmVmaW5lKQpkZlJlZmluZUNvbW1vbiRyZWZpbmVbZGZSZWZpbmVDb21tb24kcGVwdGlkb2Zvcm0gPT1kZk5vUmVmaW5lQ29tbW9uJHBlcHRpZG9mb3JtXSA8LSJzYW1lIgoKZGZzVGFuZGVtW1tyZWZpbmVJZF1dJHJlZmluZVtkZnNUYW5kZW1bW3JlZmluZUlkXV0kaW5Ob1JlZmluZV0gPC0gZGZSZWZpbmVDb21tb24kcmVmaW5lCmRmc1RhbmRlbVtbcmVmaW5lSWRdXSRyZWZpbmVURCA8LSBwYXN0ZShkZnNUYW5kZW1bW3JlZmluZUlkXV0kcmVmaW5lLGlmZWxzZShkZnNUYW5kZW1bW3JlZmluZUlkXV0kaXNfZGVjb3ksImRlY295IiwidGFyZ2V0IikpICU+JSBmYWN0b3IobGV2ZWxzPWMoInNhbWUgdGFyZ2V0Iiwic2FtZSBkZWNveSIsIm5ldyB0YXJnZXQiLCJzd2l0Y2hlZCB0YXJnZXQiLCJuZXcgZGVjb3kiLCJzd2l0Y2hlZCBkZWNveSIpKQpgYGAKCkNvbnN0cnVjdCBmaWd1cmUgd2l0aCBoaXN0b2dyYW1zIHN0cmF0ZWZpZWQgYWNjb3JkaW5nIHRvIFBTTSB0eXBlLiAKCmBgYHtyfQpmaWdzVGFuZGVtU3dpc3NSZWZpbmVtZW50SGlzdFBzbVR5cGUgPC0gZGZzVGFuZGVtW1tyZWZpbmVJZF1dICU+JSAKICBnZ3Bsb3QoYWVzKHg9c2NvcmUsZmlsbD1yZWZpbmVURCwgY29sID0gSSgiYmxhY2siKSkpICsKICBnZW9tX2hpc3RvZ3JhbShiaW5zPTUwLCBwb3NpdGlvbj0iaWRlbnRpdHkiLGFscGhhPS45KSArICAgCiAgc2NhbGVfZmlsbF9tYW51YWwoInZhbHVlcyIgPSBjKGBzYW1lIHRhcmdldGAgPSAiIzAwOTkwMCIsYHNhbWUgZGVjb3lgID0gIiNGRjk5MDAiLCBgbmV3IHRhcmdldGAgPSAiIzVkZjU0MiIsIGBuZXcgZGVjb3lgPSIjYzAzNjAwIixgc3dpdGNoZWQgdGFyZ2V0YD0iIzQyZjVjOCIsYHN3aXRjaGVkIGRlY295YCA9ICIjZjU0MjgxIikpICsKICB0aGVtZV9idygpICsgCiAgdGhlbWUocGxvdC50aXRsZSA9IGVsZW1lbnRfdGV4dChzaXplID0gcmVsKDEuNSkpLCAKICAgICAgICBheGlzLnRpdGxlID0gZWxlbWVudF90ZXh0KHNpemUgPSByZWwoMS4yKSksIAogICAgICAgIGF4aXMudGV4dCA9IGVsZW1lbnRfdGV4dChzaXplID0gcmVsKDEuMikpLCAKICAgICAgICBheGlzLnRpdGxlLnkgPSBlbGVtZW50X3RleHQoYW5nbGUgPSAwKSkKCnBzbVR5cGUgPC0gZGZzVGFuZGVtW1tyZWZpbmVJZF1dICU+JSBwdWxsKHJlZmluZVREKSAlPiUgdGFibGUKcGkwIDwtIHN1bShkZnNUYW5kZW1bW3JlZmluZUlkXV0kaXNfZGVjb3kpLyBzdW0oIWRmc1RhbmRlbVtbcmVmaW5lSWRdXSRpc19kZWNveSkKcGlTYW1lIDwtIHBzbVR5cGVbInNhbWUgZGVjb3kiXS9zdW0oIWRmc1RhbmRlbVtbcmVmaW5lSWRdXSRpc19kZWNveSkKcGlTYW1lTmV3IDwtIChwc21UeXBlWyJzYW1lIGRlY295Il0rcHNtVHlwZVsibmV3IGRlY295Il0pL3N1bSghZGZzVGFuZGVtW1tyZWZpbmVJZF1dJGlzX2RlY295KQpwaVNhbWVOZXdTd2l0Y2ggPC0gKHBzbVR5cGVbInNhbWUgZGVjb3kiXStwc21UeXBlWyJuZXcgZGVjb3kiXSArIHBzbVR5cGVbInN3aXRjaGVkIGRlY295Il0pL3N1bSghZGZzVGFuZGVtW1tyZWZpbmVJZF1dJGlzX2RlY295KQpwaVNhbWVOZXdTd2l0Y2hOZXdUYXJnZXQgPC0gKHBzbVR5cGVbInNhbWUgZGVjb3kiXStwc21UeXBlWyJuZXcgZGVjb3kiXSArIHBzbVR5cGVbInN3aXRjaGVkIGRlY295Il0gKyBwc21UeXBlWyJuZXcgdGFyZ2V0Il0pL3N1bSghZGZzVGFuZGVtW1tyZWZpbmVJZF1dJGlzX2RlY295KQoKZ2dzYXZlKCIuL2ZpZ3MvZmlnVGFuZGVtUmVmaW5lU3dpc3NQU010eXBlSGlzdFBQLnBuZyIsIAogICAgICAgcGxvdD0gZ3JpZEV4dHJhOjpncmlkLmFycmFuZ2UoCiAgICAgICAgIGZpZ3NUYW5kZW1Td2lzc1JlZmluZW1lbnRIaXN0UHNtVHlwZSArCiAgICAgICAgICAgZ2d0aXRsZShOVUxMKSArCiAgICAgICAgICAgeWxhYihOVUxMKSArCiAgICAgICAgICAgeGxpbSgtNi4yLDM1KSArCiAgICAgICAgICAgdGhlbWUoCiAgICAgICAgICAgICBsZWdlbmQucG9zaXRpb24gPSBjKDAuNzMsMC42OCksCiAgICAgICAgICAgICBsZWdlbmQudGl0bGUgPSBlbGVtZW50X2JsYW5rKCkpICsKICAgICAgICAgICAgICAgICAgICBhbm5vdGF0ZSgicmVjdCIsIHhtaW4gPSB0aHJlc2gsIHhtYXggPSAzNSwgeW1pbiA9IC0xMCwgeW1heCA9IDE1MDAsIGFscGhhID0gLjIpICsgCiAgICAgIGFubm90YXRlKGdlb209InRleHQiLCB4PXRocmVzaCsxLCB5PTE0MDAsIGxhYmVsPSJ4ID4gdFsnMSUgRkRSJ10iLAogICAgICAgICAgICAgIGNvbG9yPSJibGFjayIsaGp1c3Q9MCAscGFyc2U9VFJVRSkgKwogICAgICAgIGFubm90YXRlKGdlb209InJlY3QiLHhtaW49dGhyZXNoLHhtYXg9dGhyZXNoLHltaW49MCx5bWF4PTE1MDAsY29sb3I9InJlZCIpLCAKICAgICAgICAgcHBQbG90c1RhbmRlbVtbcmVmaW5lSWRdXSArIAogICAgICAgICAgIGdlb21fcG9seWdvbihhZXMoeD14LHk9eSksZGF0YT1kYXRhLmZyYW1lKHg9YygwLDEsMSkseT1jKDAsMCxwaVNhbWUpKSxmaWxsPSIjRkY5OTAwIixpbmhlcml0LmFlcyA9IEZBTFNFKSArCiAgICAgICAgICAgZ2VvbV9wb2x5Z29uKGFlcyh4PXgseT15KSxkYXRhPWRhdGEuZnJhbWUoeD1jKDAsMSwxKSx5PWMoMCxwaVNhbWUscGlTYW1lTmV3KSksZmlsbD0iI2MwMzYwMCIsaW5oZXJpdC5hZXMgPSBGQUxTRSkgKwogICAgICAgICAgIGdlb21fcG9seWdvbihhZXMoeD14LHk9eSksZGF0YT1kYXRhLmZyYW1lKHg9YygwLDEsMSkseT1jKDAscGlTYW1lTmV3LHBpU2FtZU5ld1N3aXRjaCkpLGZpbGw9IiNmNTQyODEiLGluaGVyaXQuYWVzID0gRkFMU0UpICsKICAgICAgICAgICBnZW9tX3BvbHlnb24oYWVzKHg9eCx5PXkpLGRhdGE9ZGF0YS5mcmFtZSh4PWMoMCwxLDEpLHk9YygwLHBpU2FtZU5ld1N3aXRjaCxwaVNhbWVOZXdTd2l0Y2hOZXdUYXJnZXQpKSxmaWxsPSIjNWRmNTQyIixpbmhlcml0LmFlcyA9IEZBTFNFKSArCiAgICAgICAgICAgZ2VvbV9hYmxpbmUoCiAgICAgICAgICAgICBzbG9wZSA9IHBpMCkgKyAKICAgICAgICAgICBnZW9tX2FibGluZSgKICAgICAgICAgICAgIHNsb3BlID0gcGlTYW1lTmV3U3dpdGNoTmV3VGFyZ2V0KSArIAogICAgICAgICAgIHlsaW0oMCwwLjYpICsgCiAgICAgICAgICAgZ2d0aXRsZShOVUxMKSwgCiAgICAgICAgIG5jb2w9MiksIAogICAgICAgZGV2aWNlID0gInBuZyIsIAogICAgICAgd2lkdGggPSA3LjgsIAogIGhlaWdodCA9IDMuOSkKYGBgCgojIEh1bWFuIHNhbXBsZSAKCk1ha2UgZGlhZ25vc3RpYyBwbG90cyBmb3IgcmFuayAxIGFuZCByYW5rIDIuIAoKYGBge3J9CiMgUC1QIHBsb3QgZm9yIGh1bWFuIHNhbXBsZSAKcGF0aDJGaWxlIDwtICIuL2RhdGEvUFhEMDI4NzM1LUxGUV9PcmJpdHJhcF9EREFfSHVtYW5fMDFfdW5pcHJvdC1oc2FwaWVucy1jYW5vbmljYWwtaXNvZm9ybXMtY3JhcF9tc2dmcGx1cy1waG9zcGhvLm1zZ2YubXppZC50c3YiCmRmIDwtIHJlYWRfdHN2KHBhdGgyRmlsZSkKZGYgPC0gZGZbcm93U3VtcyhzYXBwbHkoY3JhcEVudHJpZXMsIGdyZXBsLGZpeGVkPVRSVUUseCA9IGRmJHByb3RlaW5fbGlzdCkpID09IDAsXQoKCmdnc2F2ZSgKICBmaWxlbmFtZSA9ICIuL2ZpZ3MvZmlnSHVtYW5Nc2dmUGx1cy5wbmciLAogIHBsb3QgPSBncmlkRXh0cmE6OmdyaWQuYXJyYW5nZSgKICAgIGV2YWxUYXJnZXREZWNveXNIaXN0KAogICAgICBkZiAlPiUgZmlsdGVyKHJhbms9PTEpLAogICAgICAiaXNfZGVjb3kiLAogICAgICAic2NvcmUiLAogICAgICBUUlVFKSArIAogICAgICBnZ3RpdGxlKE5VTEwpICsKICAgICAgZ2VvbV9oaXN0b2dyYW0oCiAgICAgICAgYmlucz01MCwgCiAgICAgICAgYWxwaGE9LjksIAogICAgICAgIHBvc2l0aW9uPSJpZGVudGl0eSIpICsKICAgICAgdGhlbWUoCiAgICAgICAgICAgICBsZWdlbmQucG9zaXRpb24gPSBjKDAuNzUsMC43NSksCiAgICAgICAgICAgICApLAogICAgZXZhbFRhcmdldERlY295c1BQUGxvdCgKICAgICAgZGYgJT4lIGZpbHRlcihyYW5rPT0xKSwKICAgICAgImlzX2RlY295IiwgCiAgICAgICJzY29yZSIsCiAgICAgIFRSVUUpICsgCiAgICAgIGdndGl0bGUoTlVMTCksCiAgICBuY29sPTIKICApLAogIGRldmljZSA9ICJwbmciLCAKICB3aWR0aCA9IDcuOCwgCiAgaGVpZ2h0ID0gMy45KQoKZ2dzYXZlKAogIGZpbGVuYW1lID0gIi4vZmlncy9maWdIdW1hbk1zZ2ZQbHVzUjIucG5nIiwKICBwbG90ID0gZ3JpZEV4dHJhOjpncmlkLmFycmFuZ2UoCiAgICAgZXZhbFRhcmdldERlY295c0hpc3QoCiAgICAgIGRmICU+JSBmaWx0ZXIocmFuaz09MiksCiAgICAgICJpc19kZWNveSIsCiAgICAgICJzY29yZSIsCiAgICAgIFRSVUUpICsgCiAgICAgIGdndGl0bGUoTlVMTCkgKwogICAgICBnZW9tX2hpc3RvZ3JhbSgKICAgICAgICBiaW5zPTUwLCAKICAgICAgICBhbHBoYT0uOSwKICAgICAgICBwb3NpdGlvbiA9ICJpZGVudGl0eSIpICsKICAgICAgdGhlbWUoCiAgICAgICAgICAgICBsZWdlbmQucG9zaXRpb24gPSBjKDAuNzUsMC43NSksCiAgICAgICAgICAgICApLAogICAgZXZhbFRhcmdldERlY295c1BQUGxvdCgKICAgICAgZGYgJT4lIGZpbHRlcihyYW5rPT0yKSwKICAgICAgImlzX2RlY295IiwgCiAgICAgICJzY29yZSIsCiAgICAgIFRSVUUpICsgCiAgICAgIGdndGl0bGUoTlVMTCksCiAgICBuY29sPTIKICApLAogIGRldmljZSA9ICJwbmciLCAKICB3aWR0aCA9IDcuOCwgCiAgaGVpZ2h0ID0gMy45KQpgYGAKCiMgSW1tdW5vcGVwdGlkb21pY3MgCgpNYWtlIGRpYWdub3N0aWMgcGxvdHMgCgpgYGB7cn0KIyBwbG90IGltbXVub3BlcHRpZG9taWNzIHBsb3QKcGF0aDJGaWxlIDwtICIuL2RhdGEvaW1tdW5vcGVwdGlkb21pY3NfbXNtc19JQUEudHh0IgpkZiA8LSByZWFkX3RzdihwYXRoMkZpbGUpCgpnZ3NhdmUoCiAgZmlsZW5hbWUgPSAiLi9maWdzL2ZpZ1BlcHRpZG9taWNzLnBuZyIsCiAgcGxvdCA9IGdyaWRFeHRyYTo6Z3JpZC5hcnJhbmdlKAogICAgZXZhbFRhcmdldERlY295c0hpc3QoZGYsImlzX2RlY295IiwgInNjb3JlIixGQUxTRSkgKyAKICAgICAgZ2VvbV9oaXN0b2dyYW0oCiAgICAgICAgYmlucz01MCwgCiAgICAgICAgYWxwaGE9LjksIAogICAgICAgIHBvc2l0aW9uPSJpZGVudGl0eSIpICsKICAgICAgZ2d0aXRsZShOVUxMKSArCiAgICAgIHRoZW1lKAogICAgICAgICAgICAgbGVnZW5kLnBvc2l0aW9uID0gYygwLjMsMC43KSwKICAgICAgICAgICAgICksCiAgICBldmFsVGFyZ2V0RGVjb3lzUFBQbG90KGRmLCJpc19kZWNveSIsICJzY29yZSIsRkFMU0UpICsgCiAgICAgIHhsYWIoIkZkIikgKyAKICAgICAgeWxhYigiRnQiKSArCiAgICAgIGdndGl0bGUoTlVMTCksCiAgICBuY29sPTIKICApLAogIGRldmljZSA9ICJwbmciLCAKICB3aWR0aCA9IDcuOCwgCiAgaGVpZ2h0ID0gMy45KQpgYGAKCiMgSm9pbnQgUC1QbG90IAoKUHV0IHNlYXJjaGVzIG9mIE1TR0YrIGFuZCBYVGFuZGVtIHdpdGggcmVmaW5lbWVudCBvbiBvbmUgcGxvdC4gCgpgYGB7cn0KIyBKb2ludCBQUC1wbG90Cm1zZ2ZJZCA8LSB3aGljaCgKICBncmVwbChwYXR0ZXJuPSJzd2lzc3Byb3QiLG1zZ2ZGaWxlcyxmaXhlZCA9IFRSVUUpICYgZ3JlcGwocGF0dGVybj0icGZ1cmlvc3VzIixtc2dmRmlsZXMsZml4ZWQgPSBUUlVFKQogICkgCgpoIDwtIFRhcmdldERlY295Ojo6cHJvY2Vzc09iamVjdHMoCiAgbGlzdChkZnNUYW5kZW1bW3JlZmluZUlkXV0sZGZzbXNnZltbbXNnZklkXV0gJT4lIGZpbHRlcihyYW5rPT0xKSksCiAgZGVjb3k9YygiaXNfZGVjb3kiLCJpc19kZWNveSIpLAogIHNjb3JlPWMoInNjb3JlIiwic2NvcmUiKSwKICBsb2cxMD1jKEZBTFNFLFRSVUUpCiAgKSAlPiUgCiAgVGFyZ2V0RGVjb3k6OjpwcFNjb3Jlc0RhdGEoKQpnZ3NhdmUoCiAgZmlsZSA9ICIuL2ZpZ3MvZmlnVGFuZGVtTXNHZlN3aXNzQ29tYmluZGVkUFAucG5nIiwKICBwbG90ID0gaCRkZiAlPiUKICAgIGdncGxvdCgKICAgICAgYWVzKEZkcCx6LGNvbG9yPWlkJT4lYXMuZmFjdG9yKSkgKyAKICAgIGdlb21fcG9pbnQoKSArCiAgICBnZW9tX2FibGluZShzbG9wZT0wKSArIAogICAgdGhlbWVfYncoKSArIAogICAgdGhlbWUobGVnZW5kLnRpdGxlID0gZWxlbWVudF9ibGFuaygpLAogICAgICAgICAgbGVnZW5kLnBvc2l0aW9uID0gYygwLjIsLjg1KSkgKwogICAgeWxhYigiRnQtcGkwIikgKwogICAgc2NhbGVfY29sb3JfZGlzY3JldGUobGFiZWxzPWMoIlghVGFuZGVtIiwiTVNHRisiKSkgKwogICAgeGxhYigiRmQiKSwKICBkZXZpY2UgPSAicG5nIiwgCiAgd2lkdGggPSAzLjksIAogIGhlaWdodCA9IDMuOSkKYGBgCgojIENsZWFuIHVwIGZpbGVzCgpgYGB7cn0KZiA8LSBsaXN0LmZpbGVzKCIuL2RhdGEiLCByZWN1cnNpdmUgPSBUUlVFLCBmdWxsLm5hbWVzID0gVFJVRSkKZmlsZS5yZW1vdmUoZikKZmlsZS5yZW1vdmUoImRhdGEiKQpmaWxlLnJlbW92ZShkZXN0RmlsZSkKYGBgCgojIFNlc3Npb24gSW5mbwoKYGBge3J9CnNlc3Npb25JbmZvKCkKYGBgCgoKCgo=</div>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeSourceEmbed("paper_figures.Rmd");
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
