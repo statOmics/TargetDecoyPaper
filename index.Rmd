@@ -6,7 +6,8 @@ output:
       toc: false
       toc_float: false
       number_sections: false
-
+      theme: flatly
+      highlight: tango
 ---
 
 
@@ -21,3 +22,4 @@ This repository contains all necessary files to perform all data analyses and ge
 - Generate all Figures: [paper_figures](./paper_figures.html)
 
 - Document with Supplementary Figures: [supplementary_figures](./paper_supplementary.pdf)
+
