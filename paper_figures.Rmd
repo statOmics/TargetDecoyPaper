@@ -447,7 +447,7 @@ ggsave(
 ```{r}
 f <- list.files("./data", recursive = TRUE, full.names = TRUE)
 file.remove(f)
-file.remove(data)
+file.remove("data")
 file.remove(destFile)
 ```
 
