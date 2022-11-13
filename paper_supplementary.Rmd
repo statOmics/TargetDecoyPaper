@@ -1,34 +1,32 @@
 ---
 title: "Supplementary Figures: Quality control for the target decoy approach for peptide identification"
-author: 
-  Elke Debrie$^1$
-  Milan Malfait$^1$
-  Ralf Gabriels$^{2,3}$
-  Arthur Declerq$^{2,3}$
-  Adriaan Sticker$^{2,3}$
-  Lennart Martens$^{2,3}$
-  Lieven Clement$^{1,4}$
-date: 
-  $^1$ Department of Applied Mathematics, Computer Science and Statistics, Ghent University, Ghent, Belgium \newline
-  $^2$ VIB-UGent Center for Medical Biotechnology, VIB, Zwijnaarde, Belgium \newline
-  $^3$ Department of Biomolecular Medicine, Ghent University, Ghent, Belgium \newline
-  $^4$ Corresponding Author$:$ lieven.clement@ugent.be
 output: 
   bookdown::pdf_document2:
+    template: "myTemp.tex"
     keep_tex: yes
     latex_engine: xelatex
-    citation_package: natbib
     toc: no
-link-citations: yes
+    citation_package: natbib
+    includes:
+      in_header: authors.tex
+
+documentclass: achemso
+classoption: 
+  - journal=jprobs
+  - manuscript=article
+  
 bibliography: [biblio.bib]
-biblio-style: biochem
 linkcolor: blue
 urlcolor: blue
 citecolor: blue
 ---
 
-\setcitestyle{super,open={[},close={]}}
-\def\citenumfont{}
+```{r echo=FALSE, warning=FALSE}
+if (!tinytex::check_installed("achemso")) tinytex::tlmgr_install("achemso")
+if (!tinytex::check_installed("caption")) tinytex::tlmgr_install("caption")
+if (!tinytex::check_installed("setspace")) tinytex::tlmgr_install("setspace")
+```
+
 
 
 (ref:Figure1)  Histogram and PP-plot for a concatenated search on a *Pyrococcus* run against a database of canonical *P. furiosus* sequences from Swiss-Prot using X!Tandem without refinement. Both the histogram and the P-P plot show no violation of the TDA assumptions.
