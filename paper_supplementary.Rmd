@@ -21,7 +21,7 @@ urlcolor: blue
 citecolor: blue
 ---
 
-```{r echo=FALSE, warning=FALSE}
+```{r echo=FALSE, warning=FALSE, message=FALSE}
 if (!tinytex::check_installed("achemso")) tinytex::tlmgr_install("achemso")
 if (!tinytex::check_installed("caption")) tinytex::tlmgr_install("caption")
 if (!tinytex::check_installed("setspace")) tinytex::tlmgr_install("setspace")
