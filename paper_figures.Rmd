@@ -449,6 +449,10 @@ ggsave(
 # Graphical abstract 
 
 ```{r}
+
+histsTandem25 <- lapply(dfsTandem,evalTargetDecoysHist, score="score", decoy="is_decoy", log10=FALSE,nBins=25)
+histsMsgf25 <- lapply(dfsmsgf,function(db, score, decoy, log10) evalTargetDecoysHist(db %>% filter(rank==1), decoy, score, log10) + xlab("Score") + ggtitle(NULL) +   geom_histogram(bins=25, position="identity",alpha=.9), score="score", decoy="is_decoy", log10=TRUE)
+
   set.seed(15123)
   df <- data.frame(
     xtheo = c(sample(seq(0.5,2.1,length=30),10),rep(NA,5)),
@@ -488,9 +492,9 @@ theoPlot <- df%>%
     
 tocPlot <- gridExtra::grid.arrange(
     theoPlot,
-    histsMsgf[[pyroId]] +
+    histsMsgf25[[pyroId]] +
         geom_histogram(
-          bins=50, 
+          bins=25, 
           position="identity",
           alpha=.9) +
         ggtitle("Valid TDA") +
@@ -510,12 +514,11 @@ tocPlot <- gridExtra::grid.arrange(
             panel.grid.major = element_blank(), 
             panel.grid.minor = element_blank()
             ),
-    histsTandem[[refineId]] + 
-         geom_histogram(bins=50, position="identity",alpha=.9) +
+    histsTandem25[[refineId]] + 
+         geom_histogram(bins=25, position="identity",alpha=.9) +
         scale_fill_manual(
             values = c(`FALSE` = "#009900", `TRUE` = "#FF9900"),
             labels=c("Target", "Decoy")) +
-        ylim(0,1500) +
         xlim(-6.2,35) +
         ggtitle("Invalid TDA") +
         theme(
