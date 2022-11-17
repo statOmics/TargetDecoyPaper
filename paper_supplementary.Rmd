@@ -21,6 +21,9 @@ urlcolor: blue
 citecolor: blue
 ---
 
+<a rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a>
+
+
 ```{r echo=FALSE, warning=FALSE, message=FALSE}
 if (!tinytex::check_installed("achemso")) tinytex::tlmgr_install("achemso")
 if (!tinytex::check_installed("caption")) tinytex::tlmgr_install("caption")

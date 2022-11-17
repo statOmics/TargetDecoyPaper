@@ -22,3 +22,10 @@ To reproduce the results that are displayed in this publication, proceed as foll
 2. Open the selected R scripts (.Rmd) in the root of this repository.
 4. Run the analyses - the figures will automatically be stored in the figs folder . 
 
+***
+
+## License
+
+The website and code are licensed under [CC BY-SA 4.0](http://creativecommons.org/licenses/by-sa/4.0/)
+
+The main paper is licensed under [CC-BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/)

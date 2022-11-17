@@ -23,3 +23,20 @@ This repository contains all necessary files to perform all data analyses and ge
 
 - Document with Supplementary Figures: [supplementary_figures](./paper_supplementary.pdf)
 
+- [bioRxiv preprint](./paper_main.pdf)
+
+---
+
+Links: 
+
+- data on on [zenodo](https://doi.org/10.5281/zenodo.7308022)
+
+- [bioRxiv](https://doi.org/10.1101/2022.11.17.516857)
+
+--- 
+
+License: 
+
+The website and code are licensed under [CC BY-SA 4.0](http://creativecommons.org/licenses/by-sa/4.0/)
+
+The main paper is licensed under [CC-BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/)
